@@ -228,7 +228,6 @@
       document.getElementById('currentDateStr2').innerText = dateStr;
     }
 
-    // Gegevens ophalen uit Google Sheets bij opstarten
     function fetchDataFromSheet() {
       if (!WEB_APP_URL) return;
       fetch(WEB_APP_URL)
@@ -371,14 +370,14 @@
       } else { receiptEten.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niets gegeten vandaag</div>`; }
     }
 
-    function syncToSheet(statusId, successMsg) {
+    function sendActionToSheet(payload, statusId, successMsg) {
       if (!WEB_APP_URL) return;
       document.getElementById(statusId).innerText = "Synchroniseren...";
       fetch(WEB_APP_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(localData)
+        body: JSON.stringify(payload)
       }).then(() => {
         document.getElementById(statusId).innerText = successMsg;
         setTimeout(() => { document.getElementById(statusId).innerText = ""; }, 1500);
@@ -391,36 +390,77 @@
       let invoerVeldVal = parseFloat(document.getElementById('customAmount').value);
       let hoeveel = !isNaN(invoerVeldVal) ? invoerVeldVal : selectedAmount;
       let now = new Date();
-      localData.logs.push({ datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), drinken: selectedDrink, hoeveel: hoeveel });
+      let newItem = { datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), drinken: selectedDrink, hoeveel: hoeveel };
+      
+      localData.logs.push(newItem);
       updateUI();
-      syncToSheet('statusMsgVocht', 'Vocht opgeslagen & gesynchroniseerd! ✅');
+      
+      sendActionToSheet({
+        action: 'add',
+        type: 'Vocht',
+        datum: newItem.datum,
+        tijd: newItem.tijd,
+        detail1: newItem.drinken,
+        detail2: newItem.hoeveel
+      }, 'statusMsgVocht', 'Vocht opgeslagen & gesynchroniseerd! ✅');
     }
 
     function opslaanEten() {
       let checkboxes = document.querySelectorAll('input[name="foodChoice"]:checked');
       if (checkboxes.length === 0) { alert("Vink ten minste één item aan."); return; }
       let now = new Date();
+      let datum = now.toISOString().slice(0, 10);
+      let tijd = now.toTimeString().slice(0, 5);
+      
       checkboxes.forEach(cb => {
-        localData.foodLogs.push({ datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), moment: selectedMealType, voedsel: cb.value });
+        let newItem = { datum: datum, tijd: tijd, moment: selectedMealType, voedsel: cb.value };
+        localData.foodLogs.push(newItem);
+        
+        sendActionToSheet({
+          action: 'add',
+          type: 'Eten',
+          datum: datum,
+          tijd: tijd,
+          detail1: selectedMealType,
+          detail2: cb.value
+        }, 'statusMsgEten', 'Eten opgeslagen & gesynchroniseerd! ✅');
       });
+      
       updateUI();
       document.querySelectorAll('input[name="foodChoice"]').forEach(cb => cb.checked = false);
-      syncToSheet('statusMsgEten', 'Eten opgeslagen & gesynchroniseerd! ✅');
     }
 
     function deleteVochtLog(index) {
       if (confirm("Item verwijderen?")) {
+        let item = localData.logs[index];
         localData.logs.splice(index, 1);
         updateUI();
-        syncToSheet('statusMsgVocht', 'Verwijderd & gesynchroniseerd!');
+        
+        sendActionToSheet({
+          action: 'delete',
+          type: 'Vocht',
+          datum: item.datum,
+          tijd: item.tijd,
+          detail1: item.drinken,
+          detail2: item.hoeveel
+        }, 'statusMsgVocht', 'Verwijderd & gesynchroniseerd!');
       }
     }
 
     function deleteEtenLog(index) {
       if (confirm("Item verwijderen?")) {
+        let item = localData.foodLogs[index];
         localData.foodLogs.splice(index, 1);
         updateUI();
-        syncToSheet('statusMsgEten', 'Verwijderd & gesynchroniseerd!');
+        
+        sendActionToSheet({
+          action: 'delete',
+          type: 'Eten',
+          datum: item.datum,
+          tijd: item.tijd,
+          detail1: item.moment,
+          detail2: item.voedsel
+        }, 'statusMsgEten', 'Verwijderd & gesynchroniseerd!');
       }
     }
 
@@ -434,7 +474,7 @@
 
     function exportPDF() { window.print(); }
 
-    // Start de app en haal direct data op uit Google Sheets
+    // Bij het opstarten direct data ophalen van Google Sheets zodat alle apparaten gelijk lopen
     fetchDataFromSheet();
   </script>
 </body>
