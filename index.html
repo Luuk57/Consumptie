@@ -128,7 +128,7 @@
         </div>
         <div id="alertBanner" class="alert-banner alert-safe">Nog ruimte over</div>
         <div class="receipt" id="receiptListVocht">
-          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens laden...</div>
+          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens ophalen...</div>
         </div>
         <div class="settings-row">
           <span>Limiet (ml):</span>
@@ -160,7 +160,7 @@
         <div class="date-header" id="currentDateStr2">Laden...</div>
         <h3 style="text-align: center; margin-bottom: 4px;">Vandaag gegeten</h3>
         <div class="receipt" id="receiptListEten">
-          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens laden...</div>
+          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens ophalen...</div>
         </div>
       </div>
       <div class="card">
@@ -203,8 +203,8 @@
     let foods = JSON.parse(localStorage.getItem('eten_items')) || ["Broodje Kaas", "Yoghurt", "Appel", "Warme Maaltijd", "Soep"];
     
     let localData = {
-      logs: JSON.parse(localStorage.getItem('consumptie_logs')) || [],
-      foodLogs: JSON.parse(localStorage.getItem('eten_logs')) || []
+      logs: [],
+      foodLogs: []
     };
 
     let selectedDrink = drinks[0] || "";
@@ -226,6 +226,24 @@
       let dateStr = new Date().toLocaleDateString('nl-NL', options);
       document.getElementById('currentDateStr1').innerText = dateStr;
       document.getElementById('currentDateStr2').innerText = dateStr;
+    }
+
+    // Gegevens ophalen uit Google Sheets bij opstarten
+    function fetchDataFromSheet() {
+      if (!WEB_APP_URL) return;
+      fetch(WEB_APP_URL)
+        .then(response => response.json())
+        .then(data => {
+          if (data.logs) localData.logs = data.logs;
+          if (data.foodLogs) localData.foodLogs = data.foodLogs;
+          initUI();
+        })
+        .catch(err => {
+          console.log("Kon niet synchroniseren, gebruik lokale backup", err);
+          localData.logs = JSON.parse(localStorage.getItem('consumptie_logs')) || [];
+          localData.foodLogs = JSON.parse(localStorage.getItem('eten_logs')) || [];
+          initUI();
+        });
     }
 
     function initUI() {
@@ -365,7 +383,7 @@
         document.getElementById(statusId).innerText = successMsg;
         setTimeout(() => { document.getElementById(statusId).innerText = ""; }, 1500);
       }).catch(() => {
-        document.getElementById(statusId).innerText = "Sync mislukt (lokaal opgeslagen)";
+        document.getElementById(statusId).innerText = "Sync mislukt";
       });
     }
 
@@ -374,7 +392,6 @@
       let hoeveel = !isNaN(invoerVeldVal) ? invoerVeldVal : selectedAmount;
       let now = new Date();
       localData.logs.push({ datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), drinken: selectedDrink, hoeveel: hoeveel });
-      localStorage.setItem('consumptie_logs', JSON.stringify(localData.logs));
       updateUI();
       syncToSheet('statusMsgVocht', 'Vocht opgeslagen & gesynchroniseerd! ✅');
     }
@@ -386,7 +403,6 @@
       checkboxes.forEach(cb => {
         localData.foodLogs.push({ datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), moment: selectedMealType, voedsel: cb.value });
       });
-      localStorage.setItem('eten_logs', JSON.stringify(localData.foodLogs));
       updateUI();
       document.querySelectorAll('input[name="foodChoice"]').forEach(cb => cb.checked = false);
       syncToSheet('statusMsgEten', 'Eten opgeslagen & gesynchroniseerd! ✅');
@@ -395,7 +411,6 @@
     function deleteVochtLog(index) {
       if (confirm("Item verwijderen?")) {
         localData.logs.splice(index, 1);
-        localStorage.setItem('consumptie_logs', JSON.stringify(localData.logs));
         updateUI();
         syncToSheet('statusMsgVocht', 'Verwijderd & gesynchroniseerd!');
       }
@@ -404,7 +419,6 @@
     function deleteEtenLog(index) {
       if (confirm("Item verwijderen?")) {
         localData.foodLogs.splice(index, 1);
-        localStorage.setItem('eten_logs', JSON.stringify(localData.foodLogs));
         updateUI();
         syncToSheet('statusMsgEten', 'Verwijderd & gesynchroniseerd!');
       }
@@ -420,7 +434,8 @@
 
     function exportPDF() { window.print(); }
 
-    initUI();
+    // Start de app en haal direct data op uit Google Sheets
+    fetchDataFromSheet();
   </script>
 </body>
 </html>
