@@ -195,7 +195,6 @@
   </div>
 
   <script>
-    // Jouw Google Apps Script Web-App URL is hier direct ingevuld:
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyK7M4BmbwfRuSmxzUsW3-MhOi3qMZjwUD6dU7-BERKyxK4D4MQw1wKOE89juo1ClC6/exec'; 
 
     let dailyGoal = localStorage.getItem('consumptie_goal') ? parseInt(localStorage.getItem('consumptie_goal')) : 2000;
@@ -227,10 +226,6 @@
     }
 
     function fetchDataFromSheet() {
-      if (!WEB_APP_URL) {
-        initUI();
-        return;
-      }
       fetch(WEB_APP_URL)
         .then(response => response.json())
         .then(data => {
@@ -239,7 +234,7 @@
           initUI();
         })
         .catch(err => {
-          console.log("Kon data niet ophalen via URL", err);
+          console.log("Kon data niet ophalen", err);
           initUI();
         });
     }
@@ -369,38 +364,36 @@
       } else { receiptEten.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niets gegeten vandaag</div>`; }
     }
 
-    function sendActionToSheet(payload, statusId, successMsg) {
-      if (!WEB_APP_URL) return;
+    function sendActionToSheet(params, statusId, successMsg) {
       document.getElementById(statusId).innerText = "Synchroniseren...";
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(() => {
-        document.getElementById(statusId).innerText = successMsg;
-        setTimeout(() => { document.getElementById(statusId).innerText = ""; }, 1500);
-      }).catch(() => {
-        document.getElementById(statusId).innerText = "Sync mislukt";
-      });
+      let url = WEB_APP_URL + '?' + new URLSearchParams(params).toString();
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(() => {
+          document.getElementById(statusId).innerText = successMsg;
+          setTimeout(() => { document.getElementById(statusId).innerText = ""; }, 1500);
+          fetchDataFromSheet(); // Haal direct verse data op om te bevestigen
+        })
+        .catch(() => {
+          document.getElementById(statusId).innerText = "Sync mislukt";
+        });
     }
 
     function opslaanVocht() {
       let invoerVeldVal = parseFloat(document.getElementById('customAmount').value);
       let hoeveel = !isNaN(invoerVeldVal) ? invoerVeldVal : selectedAmount;
       let now = new Date();
-      let newItem = { datum: now.toISOString().slice(0, 10), tijd: now.toTimeString().slice(0, 5), drinken: selectedDrink, hoeveel: hoeveel };
-      
-      localData.logs.push(newItem);
-      updateUI();
+      let datum = now.toISOString().slice(0, 10);
+      let tijd = now.toTimeString().slice(0, 5);
       
       sendActionToSheet({
         action: 'add',
         type: 'Vocht',
-        datum: newItem.datum,
-        tijd: newItem.tijd,
-        detail1: newItem.drinken,
-        detail2: newItem.hoeveel
+        datum: datum,
+        tijd: tijd,
+        detail1: selectedDrink,
+        detail2: hoeveel
       }, 'statusMsgVocht', 'Vocht opgeslagen & gesynchroniseerd! ✅');
     }
 
@@ -412,9 +405,6 @@
       let tijd = now.toTimeString().slice(0, 5);
       
       checkboxes.forEach(cb => {
-        let newItem = { datum: datum, tijd: tijd, moment: selectedMealType, voedsel: cb.value };
-        localData.foodLogs.push(newItem);
-        
         sendActionToSheet({
           action: 'add',
           type: 'Eten',
@@ -425,16 +415,12 @@
         }, 'statusMsgEten', 'Eten opgeslagen & gesynchroniseerd! ✅');
       });
       
-      updateUI();
       document.querySelectorAll('input[name="foodChoice"]').forEach(cb => cb.checked = false);
     }
 
     function deleteVochtLog(index) {
       if (confirm("Item verwijderen?")) {
         let item = localData.logs[index];
-        localData.logs.splice(index, 1);
-        updateUI();
-        
         sendActionToSheet({
           action: 'delete',
           type: 'Vocht',
@@ -449,9 +435,6 @@
     function deleteEtenLog(index) {
       if (confirm("Item verwijderen?")) {
         let item = localData.foodLogs[index];
-        localData.foodLogs.splice(index, 1);
-        updateUI();
-        
         sendActionToSheet({
           action: 'delete',
           type: 'Eten',
