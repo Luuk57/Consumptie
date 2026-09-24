@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Vocht & Eten Monitor</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --border: #cbd5e1;
+      --danger: #ef4444;
+      --primary: #0284c7;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container { width: 100%; max-width: 100%; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 6px;
+      text-align: center;
+      width: 100%;
+    }
+    .date-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      text-transform: capitalize;
+    }
+    /* Tabbladen */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 6px;
+      background: #e2e8f0;
+      border: none;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #475569;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Vocht Cirkel & Waarschuwing */
+    .progress-circle {
+      position: relative;
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background: conic-gradient(#22c55e 0deg, var(--border) 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 4px auto;
+    }
+    .progress-inner {
+      width: 57px;
+      height: 57px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-value { font-size: 12px; font-weight: bold; color: #0f172a; line-height: 1; }
+    .progress-label { font-size: 8px; color: #64748b; }
+    
+    .alert-banner {
+      font-size: 9px;
+      font-weight: bold;
+      padding: 3px 6px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    .alert-safe { background: #dcfce7; color: #166534; }
+    .alert-warning { background: #fef9c3; color: #854d0e; }
+    .alert-danger { background: #fee2e2; color: #991b1b; }
+
+    h3 { margin: 0 0 4px 0; font-size: 11px; color: var(--text); text-align: left; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .btn-wrap { position: relative; }
+    .btn {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 4px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      word-break: break-word;
+    }
+    .btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      min-height: 30px;
+    }
+    .checkbox-label input { margin-right: 6px; accent-color: var(--primary); cursor: pointer; }
+
+    .del-btn {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      font-size: 7px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .btn-action {
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .btn-action:active { transform: scale(0.98); }
+    .add-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .add-row input {
+      flex: 1;
+      padding: 4px 6px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 10px;
+      min-width: 0;
+    }
+    .add-row button {
+      padding: 4px 6px;
+      background: #e2e8f0;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 4px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 4px;
+    }
+    .settings-row input { width: 55px; padding: 3px; text-align: center; margin: 0; }
+    
+    .status-msg { margin-top: 2px; font-size: 9px; font-weight: 500; color: #16a34a; height: 12px; text-align: center; }
+    
+    .receipt {
+      background: #fffbeb;
+      border: 1px dashed #fcd34d;
+      border-radius: 6px;
+      padding: 4px 6px;
+      text-align: left;
+      max-height: 100px;
+      overflow-y: auto;
+      margin-bottom: 4px;
+    }
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      padding: 3px 0;
+      border-bottom: 1px solid #fef3c7;
+    }
+    .receipt-item:last-child { border-bottom: none; }
+    .meal-tag { font-size: 8px; background: #e2e8f0; padding: 1px 4px; border-radius: 3px; color: #334155; margin-right: 4px; }
+    .item-del-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 3px;
+      width: 16px;
+      height: 16px;
+      font-size: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+    }
+    .export-row {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .export-btn {
+      flex: 1;
+      background: #475569;
+      color: white;
+      border: none;
+      padding: 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Tabbladen om te schakelen -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('vocht')">💧 Vocht</button>
+      <button class="tab-btn" onclick="switchTab('eten')">🍽️ Eten</button>
+      <button class="tab-btn" onclick="switchTab('export')">📊 Exporteren</button>
+    </div>
+
+    <!-- TAB 1: VOCHT -->
+    <div id="tab-vocht" class="tab-content active">
+      <div class="card">
+        <div class="date-header" id="currentDateStr1">Laden...</div>
+        
+        <div class="progress-circle" id="progressCircle">
+          <div class="progress-inner">
+            <span class="progress-value" id="totalVal">0</span>
+            <span class="progress-label" id="goalLabel">/ 2000</span>
+          </div>
+        </div>
+
+        <div id="alertBanner" class="alert-banner alert-safe">Nog ruimte over</div>
+
+        <div class="receipt" id="receiptListVocht">
+          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens ophalen...</div>
+        </div>
+
+        <div class="settings-row">
+          <span>Limiet (ml):</span>
+          <input type="number" id="dailyGoalInput" value="2000" onchange="updateGoal(this.value)">
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Drinken Kiezen</h3>
+        <div class="grid" id="drinkGrid"></div>
+        <div class="add-row">
+          <input type="text" id="newDrinkInput" placeholder="Drankje...">
+          <button onclick="addDrinkBtn()">+ Voeg</button>
+        </div>
+
+        <h3>Hoeveelheid (ml)</h3>
+        <div class="grid" id="amountGrid"></div>
+        <div class="add-row">
+          <input type="number" id="newAmountInput" placeholder="ml...">
+          <button onclick="addAmountBtn()">+ Voeg</button>
+        </div>
+
+        <input type="number" id="customAmount" placeholder="Handmatig ml">
+
+        <button class="btn-action" onclick="opslaanVocht()">Voeg Vocht toe</button>
+        <div class="status-msg" id="statusMsgVocht"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ETEN -->
+    <div id="tab-eten" class="tab-content">
+      <div class="card">
+        <div class="date-header" id="currentDateStr2">Laden...</div>
+        <h3 style="text-align: center; margin-bottom: 4px;">Vandaag gegeten</h3>
+        
+        <div class="receipt" id="receiptListEten">
+          <div style="color: #94a3b8; text-align: center; font-size: 9px;">Gegevens ophalen...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Moment</h3>
+        <div class="grid" id="mealTypeGrid">
+          <button class="btn active" onclick="setMealType('Ontbijt', this)">Ontbijt</button>
+          <button class="btn" onclick="setMealType('Lunch', this)">Lunch</button>
+          <button class="btn" onclick="setMealType('Diner', this)">Diner</button>
+          <button class="btn" onclick="setMealType('Tussendoor', this)">Tussendoortje</button>
+        </div>
+
+        <h3>Wat heb je gegeten? (Meerdere keuzes)</h3>
+        <div class="grid" id="foodGrid"></div>
+        <div class="add-row">
+          <input type="text" id="newFoodInput" placeholder="Nieuw item...">
+          <button onclick="addFoodBtn()">+ Voeg</button>
+        </div>
+
+        <button class="btn-action" onclick="opslaanEten()">Voeg Eten toe</button>
+        <div class="status-msg" id="statusMsgEten"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: EXPORTEREN -->
+    <div id="tab-export" class="tab-content">
+      <div class="card">
+        <h3>Gegevens Exporteren</h3>
+        <p style="font-size: 10px; color: #64748b; text-align: left; margin-bottom: 8px;">
+          Download al je opgeslagen vocht- en etensgegevens om ze te openen in Excel/Spreadsheet, of sla ze op als PDF / printversie.
+        </p>
+        
+        <div class="export-row">
+          <button class="export-btn" onclick="exportCSV()">📥 Download Spreadsheet (CSV)</button>
+          <button class="export-btn" onclick="exportPDF()">🖨️ Download PDF / Print</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BIN_ID = '6ab43ca5ac6210605aee7cf2';
+    const MASTER_KEY = '$2a$10$z00i0.yQGLewzeMwUAoiiOSlRVYrxxBvyL/8Q0SGpLP8YiVTTuTF2';
+
+    // Opslag variabelen
+    let dailyGoal = localStorage.getItem('consumptie_goal') ? parseInt(localStorage.getItem('consumptie_goal')) : 2000;
+    let drinks = JSON.parse(localStorage.getItem('consumptie_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
+    let amounts = JSON.parse(localStorage.getItem('consumptie_amounts')) || [150, 200, 250, 500];
+    let foods = JSON.parse(localStorage.getItem('eten_items')) || ["Broodje Kaas", "Yoghurt", "Appel", "Warme Maaltijd", "Soep"];
+    
+    let cloudData = { logs: [], foodLogs: [] };
+    let selectedDrink = drinks[0] || "";
+    let selectedAmount = amounts[0] || 250;
+    let selectedMealType = 'Ontbijt';
+
+    document.getElementById('dailyGoalInput').value = dailyGoal;
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      if(tabName === 'vocht') {
+        document.getElementById('tab-vocht').classList.add('active');
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      } else if(tabName === 'eten') {
+        document.getElementById('tab-eten').classList.add('active');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      } else if(tabName === 'export') {
+        document.getElementById('tab-export').classList.add('active');
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+      }
+    }
+
+    function renderDate() {
+      const options = { weekday: 'short', month: 'short', day: 'numeric' };
+      let dateStr = new Date().toLocaleDateString('nl-NL', options);
+      document.getElementById('currentDateStr1').innerText = dateStr;
+      document.getElementById('currentDateStr2').innerText = dateStr;
+    }
+
+    function initUI() {
+      renderDate();
+
+      // Vocht Drink knoppen
+      let drinkContainer = document.getElementById('drinkGrid');
+      drinkContainer.innerHTML = "";
+      drinks.forEach((drink) => {
+        let wrap = document.createElement('div');
+        wrap.className = "btn-wrap";
+        let btn = document.createElement('button');
+        btn.className = "btn " + (selectedDrink === drink ? "active" : "");
+        btn.innerText = drink;
+        btn.onclick = function() {
+          document.querySelectorAll('#drinkGrid .btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedDrink = drink;
+        };
+        wrap.appendChild(btn);
+        if (drinks.length > 1) {
+          let del = document.createElement('button');
+          del.className = "del-btn";
+          del.innerText = "✕";
+          del.onclick = function(e) { e.stopPropagation(); removeDrink(drink); };
+          wrap.appendChild(del);
+        }
+        drinkContainer.appendChild(wrap);
+      });
+
+      // Vocht Hoeveelheid knoppen
+      let amountContainer = document.getElementById('amountGrid');
+      amountContainer.innerHTML = "";
+      amounts.forEach((amount) => {
+        let wrap = document.createElement('div');
+        wrap.className = "btn-wrap";
+        let btn = document.createElement('button');
+        btn.className = "btn " + (selectedAmount === amount ? "active" : "");
+        btn.innerText = amount + " ml";
+        btn.onclick = function() {
+          document.querySelectorAll('#amountGrid .btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedAmount = amount;
+          document.getElementById('customAmount').value = amount;
+        };
+        wrap.appendChild(btn);
+        if (amounts.length > 1) {
+          let del = document.createElement('button');
+          del.className = "del-btn";
+          del.innerText = "✕";
+          del.onclick = function(e) { e.stopPropagation(); removeAmount(amount); };
+          wrap.appendChild(del);
+        }
+        amountContainer.appendChild(wrap);
+      });
+      document.getElementById('customAmount').value = selectedAmount;
+
+      // Eten keuzes (checkboxes)
+      let foodContainer = document.getElementById('foodGrid');
+      foodContainer.innerHTML = "";
+      foods.forEach((food) => {
+        let wrap = document.createElement('div');
+        wrap.className = "btn-wrap";
+        let label = document.createElement('label');
+        label.className = "checkbox-label";
+        let checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+        checkbox.value = food;
+        checkbox.name = "foodChoice";
+        let span = document.createElement('span');
+        span.innerText = food;
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        wrap.appendChild(label);
+
+        if (foods.length > 1) {
+          let del = document.createElement('button');
+          del.className = "del-btn";
+          del.innerText = "✕";
+          del.onclick = function(e) { e.stopPropagation(); e.preventDefault(); removeFoodItem(food); };
+          wrap.appendChild(del);
+        }
+        foodContainer.appendChild(wrap);
+      });
+    }
+
+    function setMealType(type, btn) {
+      document.querySelectorAll('#mealTypeGrid .btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedMealType = type;
+    }
+
+    function updateGoal(val) {
+      let parsed = parseInt(val);
+      if (!isNaN(parsed) && parsed > 0) {
+        dailyGoal = parsed;
+        localStorage.setItem('consumptie_goal', dailyGoal);
+        updateUI();
+      }
+    }
+
+    function addDrinkBtn() {
+      let input = document.getElementById('newDrinkInput');
+      let val = input.value.trim();
+      if (val && !drinks.includes(val)) {
+        drinks.push(val);
+        localStorage.setItem('consumptie_drinks', JSON.stringify(drinks));
+        input.value = "";
+        selectedDrink = val;
+        initUI();
+      }
+    }
+    function removeDrink(drink) {
+      drinks = drinks.filter(d => d !== drink);
+      localStorage.setItem('consumptie_drinks', JSON.stringify(drinks));
+      if (selectedDrink === drink && drinks.length > 0) selectedDrink = drinks[0];
+      initUI();
+    }
+
+    function addAmountBtn() {
+      let input = document.getElementById('newAmountInput');
+      let val = parseInt(input.value);
+      if (!isNaN(val) && val > 0 && !amounts.includes(val)) {
+        amounts.push(val);
+        amounts.sort((a, b) => a - b);
+        localStorage.setItem('consumptie_amounts', JSON.stringify(amounts));
+        input.value = "";
+        selectedAmount = val;
+        initUI();
+      }
+    }
+    function removeAmount(amount) {
+      amounts = amounts.filter(a => a !== amount);
+      localStorage.setItem('consumptie_amounts', JSON.stringify(amounts));
+      if (selectedAmount === amount && amounts.length > 0) selectedAmount = amounts[0];
+      initUI();
+    }
+
+    function addFoodBtn() {
+      let input = document.getElementById('newFoodInput');
+      let val = input.value.trim();
+      if (val && !foods.includes(val)) {
+        foods.push(val);
+        localStorage.setItem('eten_items', JSON.stringify(foods));
+        input.value = "";
+        initUI();
+      }
+    }
+    function removeFoodItem(food) {
+      foods = foods.filter(f => f !== food);
+      localStorage.setItem('eten_items', JSON.stringify(foods));
+      initUI();
+    }
+
+    document.getElementById('customAmount').addEventListener('input', (e) => {
+      let val = parseFloat(e.target.value);
+      if (!isNaN(val)) selectedAmount = val;
+    });
+
+    function getProgressColor(percentage) {
+      let p = Math.min(Math.max(percentage, 0), 100);
+      let hue = (120 - (p * 1.2));
+      return `hsl(${hue}, 90%, 45%)`;
+    }
+
+    // Cloud Synchronisatie
+    function fetchData() {
+      fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': MASTER_KEY }
+      })
+      .then(response => response.json())
+      .then(data => {
+        cloudData = data.record || { logs: [], foodLogs: [] };
+        if (!cloudData.logs) cloudData.logs = [];
+        if (!cloudData.foodLogs) cloudData.foodLogs = [];
+        updateUI();
+      })
+      .catch(err => {
+        console.error("Fout bij ophalen:", err);
+      });
+    }
+
+    function updateUI() {
+      let todayStr = new Date().toISOString().slice(0, 10);
+      
+      // Vocht UI update
+      let todayLogs = cloudData.logs.filter(item => item.datum === todayStr);
+      let total = todayLogs.reduce((sum, item) => sum + item.hoeveel, 0);
+      
+      document.getElementById('totalVal').innerText = total;
+      document.getElementById('goalLabel').innerText = `/ ${dailyGoal}`;
+      
+      let percentage = (total / dailyGoal) * 100;
+      let degrees = Math.min((percentage / 100) * 360, 360);
+      let color = getProgressColor(percentage);
+      document.getElementById('progressCircle').style.background = `conic-gradient(${color} ${degrees}deg, #cbd5e1 0deg)`;
+
+      let alertBanner = document.getElementById('alertBanner');
+      if (percentage >= 100) {
+        alertBanner.className = "alert-banner alert-danger";
+        alertBanner.innerText = "⚠ Limiet bereikt of overschreden!";
+      } else if (percentage >= 75) {
+        alertBanner.className = "alert-banner alert-warning";
+        alertBanner.innerText = "⚠ Let op: Je nadert je limiet (>= 75%)";
+      } else {
+        alertBanner.className = "alert-banner alert-safe";
+        alertBanner.innerText = "✔ Nog voldoende ruimte (< 75%)";
+      }
+
+      let receiptVocht = document.getElementById('receiptListVocht');
+      if (todayLogs.length > 0) {
+        receiptVocht.innerHTML = "";
+        cloudData.logs.forEach((item, idx) => {
+          if (item.datum === todayStr) {
+            let row = document.createElement('div');
+            row.className = "receipt-item";
+            row.innerHTML = `<span><b>${item.tijd}</b> ${item.drinken}</span><span><b>${item.hoeveel}ml</b><button class="item-del-btn" onclick="deleteVochtLog(${idx})">✕</button></span>`;
+            receiptVocht.appendChild(row);
+          }
+        });
+      } else {
+        receiptVocht.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niks gedronken vandaag</div>`;
+      }
+
+      // Eten UI update
+      let receiptEten = document.getElementById('receiptListEten');
+      let todayFood = cloudData.foodLogs.filter(item => item.datum === todayStr);
+      if (todayFood.length > 0) {
+        receiptEten.innerHTML = "";
+        cloudData.foodLogs.forEach((item, idx) => {
+          if (item.datum === todayStr) {
+            let row = document.createElement('div');
+            row.className = "receipt-item";
+            row.innerHTML = `<span><b>${item.tijd}</b> <span class="meal-tag">${item.moment}</span> ${item.voedsel}</span><button class="item-del-btn" onclick="deleteEtenLog(${idx})">✕</button>`;
+            receiptEten.appendChild(row);
+          }
+        });
+      } else {
+        receiptEten.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niets gegeten vandaag</div>`;
+      }
+    }
+
+    function opslaanVocht() {
+      let invoerVeldVal = parseFloat(document.getElementById('customAmount').value);
+      let hoeveel = !isNaN(invoerVeldVal) ? invoerVeldVal : selectedAmount;
+      let now = new Date();
+      
+      cloudData.logs.push({
+        datum: now.toISOString().slice(0, 10),
+        tijd: now.toTimeString().slice(0, 5),
+        drinken: selectedDrink,
+        hoeveel: hoeveel
+      });
+      
+      syncCloud("Vocht Opgeslagen! ✅", "statusMsgVocht");
+    }
+
+    function opslaanEten() {
+      let checkboxes = document.querySelectorAll('input[name="foodChoice"]:checked');
+      if (checkboxes.length === 0) {
+        alert("Vink ten minste één item aan.");
+        return;
+      }
+      let now = new Date();
+      checkboxes.forEach(cb => {
+        cloudData.foodLogs.push({
+          datum: now.toISOString().slice(0, 10),
+          tijd: now.toTimeString().slice(0, 5),
+          moment: selectedMealType,
+          voedsel: cb.value
+        });
+      });
+      
+      syncCloud("Eten Opgeslagen! ✅", "statusMsgEten");
+      document.querySelectorAll('input[name="foodChoice"]').forEach(cb => cb.checked = false);
+    }
+
+    function deleteVochtLog(index) {
+      if (confirm("Item verwijderen?")) {
+        cloudData.logs.splice(index, 1);
+        syncCloud("Verwijderd!", "statusMsgVocht");
+      }
+    }
+
+    function deleteEtenLog(index) {
+      if (confirm("Item verwijderen?")) {
+        cloudData.foodLogs.splice(index, 1);
+        syncCloud("Verwijderd!", "statusMsgEten");
+      }
+    }
+
+    function syncCloud(msg, statusElementId) {
+      document.getElementById(statusElementId).innerText = "Opslaan...";
+      fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY },
+        body: JSON.stringify(cloudData)
+      })
+      .then(response => response.json())
+      .then(res => {
+        document.getElementById(statusElementId).innerText = msg;
+        updateUI();
+        setTimeout(() => { document.getElementById(statusElementId).innerText = ""; }, 1200);
+      })
+      .catch(err => {
+        document.getElementById(statusElementId).innerText = "Fout bij opslaan ❌";
+      });
+    }
+
+    // Exporteer functies
+    function exportCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,Type,Datum,Tijd,Details,Hoeveelheid_ml_of_Moment\n";
+      
+      cloudData.logs.forEach(item => {
+        csvContent += `Vocht,${item.datum},${item.tijd},"${item.drinken}",${item.hoeveel}\n`;
+      });
+      cloudData.foodLogs.forEach(item => {
+        csvContent += `Eten,${item.datum},${item.tijd},"${item.voedsel}",${item.moment}\n`;
+      });
+
+      let encodedUri = encodeURI(csvContent);
+      let link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "vocht_en_eten_export.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportPDF() {
+      window.print();
+    }
+
+    initUI();
+    fetchData();
+  </script>
+</body>
+</html>
