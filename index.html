@@ -278,7 +278,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Tabbladen om te schakelen -->
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('vocht')">💧 Vocht</button>
       <button class="tab-btn" onclick="switchTab('eten')">🍽️ Eten</button>
@@ -368,7 +367,7 @@
       <div class="card">
         <h3>Gegevens Exporteren</h3>
         <p style="font-size: 10px; color: #64748b; text-align: left; margin-bottom: 8px;">
-          Download al je opgeslagen vocht- en etensgegevens om ze te openen in Excel/Spreadsheet, of sla ze op als PDF / printversie.
+          Download al je opgeslagen vocht- en etensgegevens om te openen in Excel/Spreadsheet, of sla ze op als PDF / printversie.
         </p>
         
         <div class="export-row">
@@ -597,7 +596,6 @@
     function updateUI() {
       let todayStr = new Date().toISOString().slice(0, 10);
       
-      // Vocht totaal berekenen
       let todayLogs = cloudData.logs.filter(item => item.datum === todayStr);
       let total = todayLogs.reduce((sum, item) => sum + item.hoeveel, 0);
       
@@ -621,7 +619,6 @@
         alertBanner.innerText = "✔ Nog voldoende ruimte (< 75%)";
       }
 
-      // Vocht bon (nieuwste bovenaan via .reverse())
       let receiptVocht = document.getElementById('receiptListVocht');
       let todayLogsWithIndex = [];
       cloudData.logs.forEach((item, idx) => {
@@ -642,7 +639,6 @@
         receiptVocht.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niks gedronken vandaag</div>`;
       }
 
-      // Eten bon (nieuwste bovenaan via .reverse())
       let receiptEten = document.getElementById('receiptListEten');
       let todayFoodWithIndex = [];
       cloudData.foodLogs.forEach((item, idx) => {
@@ -723,7 +719,7 @@
       .then(response => response.json())
       .then(res => {
         document.getElementById(statusElementId).innerText = msg;
-        updateUI();
+        fetchData();
         setTimeout(() => { document.getElementById(statusElementId).innerText = ""; }, 1200);
       })
       .catch(err => {
@@ -754,6 +750,7 @@
       window.print();
     }
 
+    // Direct UI initialiseren en data ophalen
     initUI();
     fetchData();
   </script>
