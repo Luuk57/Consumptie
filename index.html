@@ -195,17 +195,15 @@
   </div>
 
   <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby8w5QO9e7ftgUsvH2DPQnFgGQVoe9eVf23Nf3SxSM2PDChe5TDDdvaCtRJRqdPFjHq/exec'; 
+    // Jouw Google Apps Script Web-App URL is hier direct ingevuld:
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyK7M4BmbwfRuSmxzUsW3-MhOi3qMZjwUD6dU7-BERKyxK4D4MQw1wKOE89juo1ClC6/exec'; 
 
     let dailyGoal = localStorage.getItem('consumptie_goal') ? parseInt(localStorage.getItem('consumptie_goal')) : 2000;
     let drinks = JSON.parse(localStorage.getItem('consumptie_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
     let amounts = JSON.parse(localStorage.getItem('consumptie_amounts')) || [150, 200, 250, 500];
     let foods = JSON.parse(localStorage.getItem('eten_items')) || ["Broodje Kaas", "Yoghurt", "Appel", "Warme Maaltijd", "Soep"];
     
-    let localData = {
-      logs: [],
-      foodLogs: []
-    };
+    let localData = { logs: [], foodLogs: [] };
 
     let selectedDrink = drinks[0] || "";
     let selectedAmount = amounts[0] || 250;
@@ -229,7 +227,10 @@
     }
 
     function fetchDataFromSheet() {
-      if (!WEB_APP_URL) return;
+      if (!WEB_APP_URL) {
+        initUI();
+        return;
+      }
       fetch(WEB_APP_URL)
         .then(response => response.json())
         .then(data => {
@@ -238,9 +239,7 @@
           initUI();
         })
         .catch(err => {
-          console.log("Kon niet synchroniseren, gebruik lokale backup", err);
-          localData.logs = JSON.parse(localStorage.getItem('consumptie_logs')) || [];
-          localData.foodLogs = JSON.parse(localStorage.getItem('eten_logs')) || [];
+          console.log("Kon data niet ophalen via URL", err);
           initUI();
         });
     }
@@ -474,7 +473,6 @@
 
     function exportPDF() { window.print(); }
 
-    // Bij het opstarten direct data ophalen van Google Sheets zodat alle apparaten gelijk lopen
     fetchDataFromSheet();
   </script>
 </body>
