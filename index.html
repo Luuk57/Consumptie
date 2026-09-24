@@ -383,7 +383,6 @@
     const BIN_ID = '6ab43ca5ac6210605aee7cf2';
     const MASTER_KEY = '$2a$10$z00i0.yQGLewzeMwUAoiiOSlRVYrxxBvyL/8Q0SGpLP8YiVTTuTF2';
 
-    // Opslag variabelen
     let dailyGoal = localStorage.getItem('consumptie_goal') ? parseInt(localStorage.getItem('consumptie_goal')) : 2000;
     let drinks = JSON.parse(localStorage.getItem('consumptie_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
     let amounts = JSON.parse(localStorage.getItem('consumptie_amounts')) || [150, 200, 250, 500];
@@ -422,7 +421,6 @@
     function initUI() {
       renderDate();
 
-      // Vocht Drink knoppen
       let drinkContainer = document.getElementById('drinkGrid');
       drinkContainer.innerHTML = "";
       drinks.forEach((drink) => {
@@ -447,7 +445,6 @@
         drinkContainer.appendChild(wrap);
       });
 
-      // Vocht Hoeveelheid knoppen
       let amountContainer = document.getElementById('amountGrid');
       amountContainer.innerHTML = "";
       amounts.forEach((amount) => {
@@ -474,7 +471,6 @@
       });
       document.getElementById('customAmount').value = selectedAmount;
 
-      // Eten keuzes (checkboxes)
       let foodContainer = document.getElementById('foodGrid');
       foodContainer.innerHTML = "";
       foods.forEach((food) => {
@@ -582,7 +578,6 @@
       return `hsl(${hue}, 90%, 45%)`;
     }
 
-    // Cloud Synchronisatie
     function fetchData() {
       fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
         headers: { 'X-Master-Key': MASTER_KEY }
@@ -602,7 +597,7 @@
     function updateUI() {
       let todayStr = new Date().toISOString().slice(0, 10);
       
-      // Vocht UI update
+      // Vocht totaal berekenen
       let todayLogs = cloudData.logs.filter(item => item.datum === todayStr);
       let total = todayLogs.reduce((sum, item) => sum + item.hoeveel, 0);
       
@@ -626,33 +621,43 @@
         alertBanner.innerText = "✔ Nog voldoende ruimte (< 75%)";
       }
 
+      // Vocht bon (nieuwste bovenaan via .reverse())
       let receiptVocht = document.getElementById('receiptListVocht');
-      if (todayLogs.length > 0) {
+      let todayLogsWithIndex = [];
+      cloudData.logs.forEach((item, idx) => {
+        if (item.datum === todayStr) {
+          todayLogsWithIndex.push({item, idx});
+        }
+      });
+
+      if (todayLogsWithIndex.length > 0) {
         receiptVocht.innerHTML = "";
-        cloudData.logs.forEach((item, idx) => {
-          if (item.datum === todayStr) {
-            let row = document.createElement('div');
-            row.className = "receipt-item";
-            row.innerHTML = `<span><b>${item.tijd}</b> ${item.drinken}</span><span><b>${item.hoeveel}ml</b><button class="item-del-btn" onclick="deleteVochtLog(${idx})">✕</button></span>`;
-            receiptVocht.appendChild(row);
-          }
+        todayLogsWithIndex.reverse().forEach(({item, idx}) => {
+          let row = document.createElement('div');
+          row.className = "receipt-item";
+          row.innerHTML = `<span><b>${item.tijd}</b> ${item.drinken}</span><span><b>${item.hoeveel}ml</b><button class="item-del-btn" onclick="deleteVochtLog(${idx})">✕</button></span>`;
+          receiptVocht.appendChild(row);
         });
       } else {
         receiptVocht.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niks gedronken vandaag</div>`;
       }
 
-      // Eten UI update
+      // Eten bon (nieuwste bovenaan via .reverse())
       let receiptEten = document.getElementById('receiptListEten');
-      let todayFood = cloudData.foodLogs.filter(item => item.datum === todayStr);
-      if (todayFood.length > 0) {
+      let todayFoodWithIndex = [];
+      cloudData.foodLogs.forEach((item, idx) => {
+        if (item.datum === todayStr) {
+          todayFoodWithIndex.push({item, idx});
+        }
+      });
+
+      if (todayFoodWithIndex.length > 0) {
         receiptEten.innerHTML = "";
-        cloudData.foodLogs.forEach((item, idx) => {
-          if (item.datum === todayStr) {
-            let row = document.createElement('div');
-            row.className = "receipt-item";
-            row.innerHTML = `<span><b>${item.tijd}</b> <span class="meal-tag">${item.moment}</span> ${item.voedsel}</span><button class="item-del-btn" onclick="deleteEtenLog(${idx})">✕</button>`;
-            receiptEten.appendChild(row);
-          }
+        todayFoodWithIndex.reverse().forEach(({item, idx}) => {
+          let row = document.createElement('div');
+          row.className = "receipt-item";
+          row.innerHTML = `<span><b>${item.tijd}</b> <span class="meal-tag">${item.moment}</span> ${item.voedsel}</span><button class="item-del-btn" onclick="deleteEtenLog(${idx})">✕</button>`;
+          receiptEten.appendChild(row);
         });
       } else {
         receiptEten.innerHTML = `<div style="color: #94a3b8; text-align: center; font-size: 9px;">Nog niets gegeten vandaag</div>`;
@@ -726,7 +731,6 @@
       });
     }
 
-    // Exporteer functies
     function exportCSV() {
       let csvContent = "data:text/csv;charset=utf-8,Type,Datum,Tijd,Details,Hoeveelheid_ml_of_Moment\n";
       
