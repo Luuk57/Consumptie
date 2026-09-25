@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Tasker - Vocht & Eten Monitor</title>
+  <title>Eten & Drinken Monitor</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -31,7 +31,7 @@
     }
     .container { width: 100%; max-width: 480px; }
     
-    /* Header / Dashboard Bar */
+    /* Header in DriveSync Style met Datum & Tijd */
     .app-header {
       display: flex;
       justify-content: space-between;
@@ -43,10 +43,10 @@
       margin-bottom: 10px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     }
-    .app-title { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
-    .app-date { font-size: 11px; background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 20px; }
+    .app-title { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+    .app-datetime { font-size: 10px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 20px; font-weight: 500; }
 
-    /* Navigation Tabs */
+    /* Navigatie Tabs */
     .nav-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
     .tab-btn {
       flex: 1; padding: 8px; background: #e2e8f0; border: none;
@@ -73,18 +73,10 @@
       margin-bottom: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
-    /* Progress Widget (DriveSync Dashboard style) */
-    .dashboard-stats {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 12px;
-    }
+    /* Dashboard Stats */
+    .dashboard-stats { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
     .progress-circle {
       position: relative; width: 70px; height: 70px; border-radius: 50%;
       background: conic-gradient(var(--success) 0deg, var(--border) 0deg);
@@ -101,8 +93,8 @@
     .stat-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
     .stat-row span:last-child { font-weight: 700; }
 
-    /* Status Badges */
-    .badge { font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 6px; display: inline-block; text-align: center; width: 100%; }
+    /* Badges */
+    .badge { font-size: 10px; font-weight: 700; padding: 5px 8px; border-radius: 6px; display: inline-block; text-align: center; width: 100%; }
     .badge-safe { background: #dcfce7; color: #166534; }
     .badge-warning { background: #fef9c3; color: #854d0e; }
     .badge-danger { background: #fee2e2; color: #991b1b; }
@@ -114,50 +106,43 @@
     
     .btn {
       width: 100%; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
-      padding: 9px 6px; font-size: 11px; font-weight: 600; color: var(--text); cursor: pointer;
-      transition: all 0.15s; word-break: break-word; text-align: center;
+      padding: 9px 6px; font-size: 11px; font-weight: 600; color: var(--text); cursor: pointer; text-align: center;
     }
-    .btn:hover { background: #f1f5f9; }
     .btn.active { background: var(--primary-accent); color: white; border-color: var(--primary-accent); font-weight: 700; }
     
     .checkbox-label {
       display: flex; align-items: center; background: #f8fafc; border: 1px solid var(--border);
       border-radius: 8px; padding: 8px; font-size: 11px; font-weight: 600; color: var(--text);
-      cursor: pointer; text-align: left; width: 100%; min-height: 38px;
+      cursor: pointer; width: 100%; min-height: 38px;
     }
-    .checkbox-label input { margin-right: 8px; accent-color: var(--primary-accent); cursor: pointer; width: 15px; height: 15px; }
+    .checkbox-label input { margin-right: 8px; accent-color: var(--primary-accent); width: 15px; height: 15px; }
 
     .del-btn {
       position: absolute; top: -4px; right: -4px; background: var(--danger); color: white;
       border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 9px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center; z-index: 2;
     }
     
     .btn-action {
       background: var(--primary-accent); color: white; border: none; width: 100%; padding: 11px;
       border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 6px;
-      box-shadow: 0 2px 4px rgba(2,132,199,0.3); transition: opacity 0.2s;
+      box-shadow: 0 2px 4px rgba(2,132,199,0.3);
     }
-    .btn-action:active { opacity: 0.9; }
 
     .add-row { display: flex; gap: 6px; margin-bottom: 10px; }
-    .add-row input { flex: 1; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; min-width: 0; outline: none; }
-    .add-row input:focus { border-color: var(--primary-accent); }
-    .add-row button { padding: 7px 12px; background: #e2e8f0; border: none; border-radius: 8px; font-weight: 700; font-size: 10px; cursor: pointer; color: var(--text); }
+    .add-row input { flex: 1; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; outline: none; }
+    .add-row button { padding: 7px 12px; background: #e2e8f0; border: none; border-radius: 8px; font-weight: 700; font-size: 10px; cursor: pointer; }
     
     input[type="number"] { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; text-align: center; outline: none; }
-    input[type="number"]:focus { border-color: var(--primary-accent); }
 
-    /* Activity Logs / Receipts List */
+    /* Activity Lists */
     .activity-list { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 6px; max-height: 130px; overflow-y: auto; margin-bottom: 8px; }
     .activity-item { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 6px 8px; border-bottom: 1px solid var(--border); background: white; border-radius: 6px; margin-bottom: 4px; }
-    .activity-item:last-child { margin-bottom: 0; }
     .tag { font-size: 9px; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; color: var(--text-muted); font-weight: 600; margin-right: 6px; }
     
     .item-del-btn { background: var(--danger); color: white; border: none; border-radius: 4px; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 6px; }
-
     .settings-box { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); background: #f8fafc; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); }
-    .settings-box input { width: 65px; padding: 4px; text-align: center; }
+    .settings-box input { width: 65px; padding: 4px; }
     
     .status-msg { margin-top: 4px; font-size: 10px; font-weight: 600; color: var(--success); height: 14px; text-align: center; }
     .export-row { display: flex; gap: 8px; }
@@ -167,10 +152,10 @@
 <body>
   <div class="container">
     
-    <!-- Header -->
+    <!-- Header met Eten & Drinken en Live Datum + Tijd -->
     <div class="app-header">
-      <div class="app-title">⚡ TASKER DASHBOARD</div>
-      <div class="app-date" id="currentDateStr">Laden...</div>
+      <div class="app-title">🍽️ Eten & Drinken</div>
+      <div class="app-datetime" id="currentDateTimeStr">Laden...</div>
     </div>
 
     <!-- Navigatie Tabs -->
@@ -196,7 +181,7 @@
             <div class="stat-row"><span>Resterend:</span><span id="remainingText">2000 ml</span></div>
           </div>
         </div>
-        <div id="alertBanner" class="badge badge-safe" style="margin-bottom: 10px;">✔ Nog ruimte over (< 75%)</div>
+        <div id="alertBanner" class="badge badge-safe" style="margin-bottom: 10px;">✔ Nog ruimte over</div>
         
         <div class="activity-list" id="receiptListVocht">
           <div style="color: var(--text-muted); text-align: center; font-size: 10px; padding: 10px;">Gegevens ophalen...</div>
@@ -209,20 +194,20 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Drankje Selecteren</div>
+        <div class="card-title">Drankje Kiezen</div>
         <div class="grid" id="drinkGrid"></div>
         <div class="add-row">
           <input type="text" id="newDrinkInput" placeholder="Nieuw drankje...">
-          <button onclick="addDrinkBtn()">+ Toevoegen</button>
+          <button onclick="addDrinkBtn()">+ Voeg</button>
         </div>
 
         <div class="card-title" style="margin-top: 12px;">Hoeveelheid (ml)</div>
         <div class="grid-4" id="amountGrid"></div>
         <div class="add-row">
           <input type="number" id="newAmountInput" placeholder="ml...">
-          <button onclick="addAmountBtn()">+ Toevoegen</button>
+          <button onclick="addAmountBtn()">+ Voeg</button>
         </div>
-        <input type="number" id="customAmount" placeholder="Handmatig aantal ml" style="margin-bottom: 8px;">
+        <input type="number" id="customAmount" placeholder="Handmatig ml" style="margin-bottom: 8px;">
         
         <button class="btn-action" onclick="opslaanVocht()">Voeg Vocht toe</button>
         <div class="status-msg" id="statusMsgVocht"></div>
@@ -247,11 +232,11 @@
           <button class="btn" onclick="setMealType('Tussendoor', this)">Tussendoor</button>
         </div>
 
-        <div class="card-title">Wat heb je gegeten? (Meerdere selecteerbaar)</div>
+        <div class="card-title">Wat heb je gegeten?</div>
         <div class="grid" id="foodGrid"></div>
         <div class="add-row" style="margin-top: 8px;">
           <input type="text" id="newFoodInput" placeholder="Nieuw item...">
-          <button onclick="addFoodBtn()">+ Toevoegen</button>
+          <button onclick="addFoodBtn()">+ Voeg</button>
         </div>
 
         <button class="btn-action" onclick="opslaanEten()">Voeg Eten toe</button>
@@ -259,13 +244,10 @@
       </div>
     </div>
 
-    <!-- TAB 3: EXPORTEREN / DATA -->
+    <!-- TAB 3: EXPORTEREN -->
     <div id="tab-export" class="tab-content">
       <div class="card">
-        <div class="card-title">Systeem & Synchronisatie</div>
-        <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">
-          Gegevens worden live gesynchroniseerd met je gekoppelde Google Sheet via de beveiligde Apps Script backend.
-        </p>
+        <div class="card-title">Export & Backup</div>
         <div class="export-row">
           <button class="export-btn" onclick="exportCSV()">📥 Download CSV</button>
           <button class="export-btn" onclick="exportPDF()" style="background: #475569;">🖨️ Print / PDF</button>
@@ -278,10 +260,10 @@
   <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzvMMEMc9c1vZdPp95vUVuVdjBq2cU2VuVlCyOh2v2E5IYJi71MOdrolt7t_0XoWQnj/exec'; 
 
-    let dailyGoal = localStorage.getItem('tasker_goal') ? parseInt(localStorage.getItem('tasker_goal')) : 2000;
-    let drinks = JSON.parse(localStorage.getItem('tasker_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
-    let amounts = JSON.parse(localStorage.getItem('tasker_amounts')) || [150, 200, 250, 500];
-    let foods = JSON.parse(localStorage.getItem('tasker_foods')) || ["Broodje Kaas", "Yoghurt", "Appel", "Warme Maaltijd", "Soep"];
+    let dailyGoal = localStorage.getItem('ed_goal') ? parseInt(localStorage.getItem('ed_goal')) : 2000;
+    let drinks = JSON.parse(localStorage.getItem('ed_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
+    let amounts = JSON.parse(localStorage.getItem('ed_amounts')) || [150, 200, 250, 500];
+    let foods = JSON.parse(localStorage.getItem('ed_foods')) || ["Broodje Kaas", "Yoghurt", "Appel", "Warme Maaltijd", "Soep"];
     
     let localData = { logs: [], foodLogs: [] };
 
@@ -299,11 +281,15 @@
       else if(tabName === 'export') { document.getElementById('tab-export').classList.add('active'); document.querySelectorAll('.tab-btn')[2].classList.add('active'); }
     }
 
-    function renderDate() {
-      const options = { weekday: 'short', month: 'short', day: 'numeric' };
-      let dateStr = new Date().toLocaleDateString('nl-NL', options);
-      document.getElementById('currentDateStr').innerText = dateStr;
+    function updateDateTime() {
+      const now = new Date();
+      const optionsDate = { weekday: 'short', month: 'short', day: 'numeric' };
+      const dateStr = now.toLocaleDateString('nl-NL', optionsDate);
+      const timeStr = now.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('currentDateTimeStr').innerText = `${dateStr} | ${timeStr}`;
     }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
     function fetchDataFromSheet() {
       fetch(WEB_APP_URL)
@@ -320,7 +306,6 @@
     }
 
     function initUI() {
-      renderDate();
       let drinkContainer = document.getElementById('drinkGrid');
       drinkContainer.innerHTML = "";
       drinks.forEach((drink) => {
@@ -377,26 +362,26 @@
 
     function updateGoal(val) {
       let parsed = parseInt(val);
-      if (!isNaN(parsed) && parsed > 0) { dailyGoal = parsed; localStorage.setItem('tasker_goal', dailyGoal); updateUI(); }
+      if (!isNaN(parsed) && parsed > 0) { dailyGoal = parsed; localStorage.setItem('ed_goal', dailyGoal); updateUI(); }
     }
 
     function addDrinkBtn() {
       let input = document.getElementById('newDrinkInput'); let val = input.value.trim();
-      if (val && !drinks.includes(val)) { drinks.push(val); localStorage.setItem('tasker_drinks', JSON.stringify(drinks)); input.value = ""; selectedDrink = val; initUI(); }
+      if (val && !drinks.includes(val)) { drinks.push(val); localStorage.setItem('ed_drinks', JSON.stringify(drinks)); input.value = ""; selectedDrink = val; initUI(); }
     }
-    function removeDrink(drink) { drinks = drinks.filter(d => d !== drink); localStorage.setItem('tasker_drinks', JSON.stringify(drinks)); if (selectedDrink === drink && drinks.length > 0) selectedDrink = drinks[0]; initUI(); }
+    function removeDrink(drink) { drinks = drinks.filter(d => d !== drink); localStorage.setItem('ed_drinks', JSON.stringify(drinks)); if (selectedDrink === drink && drinks.length > 0) selectedDrink = drinks[0]; initUI(); }
 
     function addAmountBtn() {
       let input = document.getElementById('newAmountInput'); let val = parseInt(input.value);
-      if (!isNaN(val) && val > 0 && !amounts.includes(val)) { amounts.push(val); amounts.sort((a,b)=>a-b); localStorage.setItem('tasker_amounts', JSON.stringify(amounts)); input.value = ""; selectedAmount = val; initUI(); }
+      if (!isNaN(val) && val > 0 && !amounts.includes(val)) { amounts.push(val); amounts.sort((a,b)=>a-b); localStorage.setItem('ed_amounts', JSON.stringify(amounts)); input.value = ""; selectedAmount = val; initUI(); }
     }
-    function removeAmount(amount) { amounts = amounts.filter(a => a !== amount); localStorage.setItem('tasker_amounts', JSON.stringify(amounts)); if (selectedAmount === amount && amounts.length > 0) selectedAmount = amounts[0]; initUI(); }
+    function removeAmount(amount) { amounts = amounts.filter(a => a !== amount); localStorage.setItem('ed_amounts', JSON.stringify(amounts)); if (selectedAmount === amount && amounts.length > 0) selectedAmount = amounts[0]; initUI(); }
 
     function addFoodBtn() {
       let input = document.getElementById('newFoodInput'); let val = input.value.trim();
-      if (val && !foods.includes(val)) { foods.push(val); localStorage.setItem('tasker_foods', JSON.stringify(foods)); input.value = ""; initUI(); }
+      if (val && !foods.includes(val)) { foods.push(val); localStorage.setItem('ed_foods', JSON.stringify(foods)); input.value = ""; initUI(); }
     }
-    function removeFoodItem(food) { foods = foods.filter(f => f !== food); localStorage.setItem('tasker_foods', JSON.stringify(foods)); initUI(); }
+    function removeFoodItem(food) { foods = foods.filter(f => f !== food); localStorage.setItem('ed_foods', JSON.stringify(foods)); initUI(); }
 
     document.getElementById('customAmount').addEventListener('input', (e) => {
       let val = parseFloat(e.target.value); if (!isNaN(val)) selectedAmount = val;
@@ -420,7 +405,7 @@
       let alertBanner = document.getElementById('alertBanner');
       if (percentage >= 100) { alertBanner.className = "badge badge-danger"; alertBanner.innerText = "⚠ Limiet bereikt!"; }
       else if (percentage >= 75) { alertBanner.className = "badge badge-warning"; alertBanner.innerText = "⚠ Je nadert je limiet (>= 75%)"; }
-      else { alertBanner.className = "badge badge-safe"; alertBanner.innerText = "✔ Nog ruimte over (< 75%)"; }
+      else { alertBanner.className = "badge badge-safe"; alertBanner.innerText = "✔ Nog ruimte over"; }
 
       let receiptVocht = document.getElementById('receiptListVocht');
       let todayLogsWithIndex = [];
@@ -509,7 +494,7 @@
       localData.logs.forEach(i => { csvContent += `Vocht,${i.datum},${i.tijd},"${i.drinken}",${i.hoeveel}\n`; });
       localData.foodLogs.forEach(i => { csvContent += `Eten,${i.datum},${i.tijd},"${i.voedsel}",${i.moment}\n`; });
       let link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent));
-      link.setAttribute("download", "tasker_export.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      link.setAttribute("download", "eten_en_drinken_export.csv"); document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
 
     function exportPDF() { window.print(); }
