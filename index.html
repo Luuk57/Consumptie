@@ -195,7 +195,7 @@
   </div>
 
   <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyK7M4BmbwfRuSmxzUsW3-MhOi3qMZjwUD6dU7-BERKyxK4D4MQw1wKOE89juo1ClC6/exec'; 
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzvMMEMc9c1vZdPp95vUVuVdjBq2cU2VuVlCyOh2v2E5IYJi71MOdrolt7t_0XoWQnj/exec'; 
 
     let dailyGoal = localStorage.getItem('consumptie_goal') ? parseInt(localStorage.getItem('consumptie_goal')) : 2000;
     let drinks = JSON.parse(localStorage.getItem('consumptie_drinks')) || ["Koffie", "Thee", "Water", "Ranja"];
@@ -373,7 +373,7 @@
         .then(() => {
           document.getElementById(statusId).innerText = successMsg;
           setTimeout(() => { document.getElementById(statusId).innerText = ""; }, 1500);
-          fetchDataFromSheet(); // Haal direct verse data op om te bevestigen
+          fetchDataFromSheet();
         })
         .catch(() => {
           document.getElementById(statusId).innerText = "Sync mislukt";
