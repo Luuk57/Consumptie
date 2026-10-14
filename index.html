@@ -44,8 +44,13 @@
         .form-group label { font-size: 11px; font-weight: 600; color: #555; }
         .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff; }
 
+        /* CATEGORIE KNOPPEN */
+        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; margin-bottom: 8px; }
+        .cat-btn { background: #e5e5e5; border: 1px solid #ccc; color: #333; font-weight: bold; padding: 8px 4px; border-radius: 4px; font-size: 12px; cursor: pointer; text-align: center; }
+        .cat-btn.active { background: var(--win-blue); color: white; border-color: var(--win-blue); }
+
         /* POS SNEL-KNOPPEN GRID */
-        .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 6px; }
+        .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
         .pos-btn { background: #eef6fc; border: 1px solid var(--win-blue); color: var(--win-blue); font-weight: bold; padding: 10px 4px; border-radius: 4px; font-size: 13px; cursor: pointer; text-align: center; }
         .pos-btn:hover { background: var(--win-blue); color: white; }
 
@@ -103,27 +108,38 @@
 
         <div class="card">
             <div class="section-title">🥤 Consumptie & POS Invoer</div>
+            
+            <!-- CATEGORIE SELECTIE KNOPPEN -->
+            <div class="form-group">
+                <label>Categorie</label>
+                <div class="cat-grid">
+                    <button type="button" class="cat-btn active" id="catDrinkenBtn" onclick="selecteerCategorie('Drinken')">Drinken</button>
+                    <button type="button" class="cat-btn" id="catEtenBtn" onclick="selecteerCategorie('Eten')">Eten</button>
+                    <button type="button" class="cat-btn" id="catTussendoorBtn" onclick="selecteerCategorie('Tussendoor')">Tussendoor</button>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>Soort Consumptie</label>
                 <select id="selectDrank" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff;"></select>
             </div>
             <div class="form-group" style="margin-top: 6px;">
-                <label>Hoeveelheid (ml)</label>
+                <label>Hoeveelheid (ml / gram)</label>
                 <input type="number" id="hoeveelheidMl" placeholder="Bijv. 200" value="200">
             </div>
 
             <!-- POS SNEL-KNOPPEN -->
             <div class="form-group" style="margin-top: 6px;">
-                <label>POS Sneltoetsen (ml)</label>
+                <label>POS Sneltoetsen</label>
                 <div class="pos-grid">
-                    <button type="button" class="pos-btn" onclick="zetMl(100)">100 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(150)">150 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(200)">200 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(250)">250 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(300)">300 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(400)">400 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(500)">500 ml</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(1000)">1000 ml</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(100)">100</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(150)">150</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(200)">200</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(250)">250</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(300)">300</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(400)">400</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(500)">500</button>
+                    <button type="button" class="pos-btn" onclick="zetMl(1000)">1000</button>
                 </div>
             </div>
 
@@ -131,7 +147,7 @@
                 <label>Opmerking (Optioneel)</label>
                 <input type="text" id="notitie" placeholder="Bijv. Tijdens maaltijd">
             </div>
-            <button type="button" class="action-btn btn-save" id="slaVochtBtn">💾 VOCHT TOEVOEGEN</button>
+            <button type="button" class="action-btn btn-save" id="slaVochtBtn">💾 CONSUMPTIE TOEVOEGEN</button>
         </div>
     </div>
 
@@ -140,8 +156,16 @@
         <div class="card">
             <div class="section-title">➕ Nieuwe Consumptie Toevoegen</div>
             <div class="form-group">
+                <label>Categorie</label>
+                <select id="nieuweCategorie" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff;">
+                    <option value="Drinken">Drinken</option>
+                    <option value="Eten">Eten</option>
+                    <option value="Tussendoor">Tussendoor</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top: 6px;">
                 <label>Naam Consumptie</label>
-                <input type="text" id="nieuweDrankNaam" placeholder="Bijv. Appelsap">
+                <input type="text" id="nieuweDrankNaam" placeholder="Bijv. Appelsap of Yoghurt">
             </div>
             <button type="button" class="action-btn btn-save" id="voegDrankToeBtn">+ Consumptie Toevoegen</button>
         </div>
@@ -151,12 +175,13 @@
             <table class="dialyse-table">
                 <thead>
                     <tr>
-                        <th>Soort Consumptie</th>
+                        <th>Categorie</th>
+                        <th>Naam</th>
                         <th style="width: 80px;">Actie</th>
                     </tr>
                 </thead>
                 <tbody id="drankenTabelBody">
-                    <tr><td colspan="2" style="color: #888;">Consumpties laden...</td></tr>
+                    <tr><td colspan="3" style="color: #888;">Consumpties laden...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -165,11 +190,12 @@
     <!-- TAB 3: HISTORIE -->
     <div id="historieTab" class="tab-content">
         <div class="card">
-            <div class="section-title">📊 Vocht Historie Overzicht</div>
+            <div class="section-title">📊 Vocht & Consumptie Historie Overzicht</div>
             <table class="dialyse-table">
                 <thead>
                     <tr>
                         <th>Datum & Tijd</th>
+                        <th>Categorie</th>
                         <th>Soort</th>
                         <th>Hoeveelheid</th>
                         <th>Opmerking</th>
@@ -177,7 +203,7 @@
                     </tr>
                 </thead>
                 <tbody id="historieTabelBody">
-                    <tr><td colspan="5" style="color: #888;">Gegevens laden...</td></tr>
+                    <tr><td colspan="6" style="color: #888;">Gegevens laden...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -188,9 +214,21 @@
         const API_KEY = "$2a$10$AAsaI9LebId4BAj60iBn3.V/Y3ayfLpT5qI5vhouztfHHUpgmuQdG";
         const DAGLIMIET = 1000;
 
+        let actieveCategorie = "Drinken";
         let centraleData = { 
             vocht: [], 
-            dranken: ["Water", "Thee", "Koffie", "Ranja", "Melk", "Soep"] 
+            dranken: [
+                { cat: "Drinken", naam: "Water" },
+                { cat: "Drinken", naam: "Thee" },
+                { cat: "Drinken", naam: "Koffie" },
+                { cat: "Drinken", naam: "Ranja" },
+                { cat: "Drinken", naam: "Melk" },
+                { cat: "Drinken", naam: "Soep" },
+                { cat: "Eten", naam: "Broodmaaltijd" },
+                { cat: "Eten", naam: "Warm eten" },
+                { cat: "Tussendoor", naam: "Yoghurt" },
+                { cat: "Tussendoor", naam: "Fruit" }
+            ] 
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -208,6 +246,19 @@
             laadDataVanBin();
         });
 
+        function selecteerCategorie(cat) {
+            actieveCategorie = cat;
+            document.getElementById('catDrinkenBtn').classList.remove('active');
+            document.getElementById('catEtenBtn').classList.remove('active');
+            document.getElementById('catTussendoorBtn').classList.remove('active');
+
+            if (cat === 'Drinken') document.getElementById('catDrinkenBtn').classList.add('active');
+            if (cat === 'Eten') document.getElementById('catEtenBtn').classList.add('active');
+            if (cat === 'Tussendoor') document.getElementById('catTussendoorBtn').classList.add('active');
+
+            vulDrankenDropdown();
+        }
+
         function zetMl(ml) {
             document.getElementById('hoeveelheidMl').value = ml;
         }
@@ -219,7 +270,19 @@
             .then(res => res.json())
             .then(data => {
                 centraleData = data.record || centraleData;
-                if (!centraleData.dranken) centraleData.dranken = ["Water", "Thee", "Koffie", "Ranja", "Melk", "Soep"];
+                if (!centraleData.dranken) {
+                    centraleData.dranken = [
+                        { cat: "Drinken", naam: "Water" },
+                        { cat: "Drinken", naam: "Thee" },
+                        { cat: "Drinken", naam: "Koffie" },
+                        { cat: "Drinken", naam: "Ranja" },
+                        { cat: "Drinken", naam: "Melk" },
+                        { cat: "Drinken", naam: "Soep" }
+                    ];
+                } else {
+                    // Migreer oude string-arrays naar object-structuur indien nodig
+                    centraleData.dranken = centraleData.dranken.map(d => typeof d === 'string' ? { cat: "Drinken", naam: d } : d);
+                }
                 if (!centraleData.vocht) centraleData.vocht = [];
 
                 vulDrankenDropdown();
@@ -262,10 +325,12 @@
             let select = document.getElementById('selectDrank');
             let huidigeVal = select.value;
             select.innerHTML = '';
-            centraleData.dranken.forEach(d => {
+            
+            let gefilterd = centraleData.dranken.filter(d => d.cat === actieveCategorie);
+            gefilterd.forEach(d => {
                 let opt = document.createElement('option');
-                opt.value = d;
-                opt.innerText = d;
+                opt.value = d.naam;
+                opt.innerText = d.naam;
                 select.appendChild(opt);
             });
             if (huidigeVal) select.value = huidigeVal;
@@ -277,7 +342,8 @@
             centraleData.dranken.forEach((d, index) => {
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><b>${d}</b></td>
+                    <td><b>${d.cat}</b></td>
+                    <td>${d.naam}</td>
                     <td><button type="button" class="btn-small btn-del" onclick="verwijderDrank(${index})">Wis</button></td>
                 `;
                 tbody.appendChild(tr);
@@ -285,11 +351,14 @@
         }
 
         function voegDrankToe() {
+            let cat = document.getElementById('nieuweCategorie').value;
             let input = document.getElementById('nieuweDrankNaam');
-            let drank = input.value.trim();
-            if (!drank) return;
-            if (!centraleData.dranken.includes(drank)) {
-                centraleData.dranken.push(drank);
+            let naam = input.value.trim();
+            if (!naam) return;
+
+            let bestaat = centraleData.dranken.some(d => d.cat === cat && d.naam.toLowerCase() === naam.toLowerCase());
+            if (!bestaat) {
+                centraleData.dranken.push({ cat: cat, naam: naam });
                 input.value = '';
                 slaGeheleDataNaarBin();
                 vulDrankenDropdown();
@@ -314,7 +383,8 @@
             let item = {
                 Datum: datumStr,
                 Tijd: tijdStr,
-                Soort: document.getElementById('selectDrank').value,
+                Categorie: actieveCategorie,
+                Soort: document.getElementById('selectDrank').value || 'Overig',
                 Hoeveelheid: parseInt(document.getElementById('hoeveelheidMl').value) || 0,
                 Notitie: document.getElementById('notitie').value || '-'
             };
@@ -325,7 +395,7 @@
             vulHistorieTabel();
             berekenVandaagTotaal();
             document.getElementById('notitie').value = '';
-            alert('Vochtconsumptie opgeslagen in cloud!');
+            alert('Consumptie opgeslagen in cloud!');
         }
 
         window.verwijderVocht = function(index) {
@@ -368,15 +438,17 @@
             let tbody = document.getElementById('historieTabelBody');
             tbody.innerHTML = '';
             if (!centraleData.vocht || centraleData.vocht.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="color: #888;">Geen consumpties geregistreerd.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="color: #888;">Geen consumpties geregistreerd.</td></tr>';
                 return;
             }
 
             centraleData.vocht.forEach((v, index) => {
+                let catNaam = v.Categorie || 'Drinken';
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${v.Datum} ${v.Tijd}</td>
-                    <td><b>${v.Soort}</b></td>
+                    <td><b>${catNaam}</b></td>
+                    <td>${v.Soort}</td>
                     <td><b>${v.Hoeveelheid} ml</b></td>
                     <td>${v.Notitie}</td>
                     <td><button type="button" class="btn-small btn-del" onclick="verwijderVocht(${index})">Wis</button></td>
