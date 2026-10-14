@@ -49,12 +49,12 @@
         .cat-btn { background: #e5e5e5; border: 1px solid #ccc; color: #333; font-weight: bold; padding: 6px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
         .cat-btn.active { background: var(--win-blue); color: white; border-color: var(--win-blue); }
 
-        /* ITEM SELECTIE KNOPPEN GRID (50% korter in hoogte) */
+        /* ITEM SELECTIE KNOPPEN GRID */
         .item-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 2px; }
         .item-btn { background: #f8f8f8; border: 1px solid #ccc; color: #333; font-weight: 600; padding: 4px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
         .item-btn.selected { background: var(--win-blue); color: white; border-color: var(--win-blue); }
 
-        /* POS SNEL-KNOPPEN GRID (50% korter in hoogte) */
+        /* POS SNEL-KNOPPEN GRID */
         .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 2px; }
         .pos-btn { background: #eef6fc; border: 1px solid var(--win-blue); color: var(--win-blue); font-weight: bold; padding: 5px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
         .pos-btn.selected { background: var(--win-blue); color: white; }
@@ -148,6 +148,25 @@
             </div>
             <button type="button" class="action-btn btn-save" id="slaVochtBtn">💾 VOEG ALLE GESELECTEERDE TOE</button>
         </div>
+
+        <!-- LIVE OVERZICHT VANDAAG ONDERAAN (LAATSTE BOVENAAN) -->
+        <div class="card">
+            <div class="section-title">📋 Vandaag Genuttigd (Laatste bovenaan)</div>
+            <table class="dialyse-table">
+                <thead>
+                    <tr>
+                        <th>Tijd</th>
+                        <th>Cat</th>
+                        <th>Soort</th>
+                        <th>Hoeveelheid</th>
+                        <th style="width: 50px;">Actie</th>
+                    </tr>
+                </thead>
+                <tbody id="vandaagTabelBody">
+                    <tr><td colspan="5" style="color: #888;">Nog niets genuttigd vandaag.</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- TAB 2: CONSUMPTIES BEHEER -->
@@ -240,7 +259,7 @@
         const DAGLIMIET = 1000;
 
         let actieveCategorie = "Drinken";
-        let geselecteerdeConsumpties = []; // Meerdere selecties
+        let geselecteerdeConsumpties = [];
         let geselecteerdePosMl = 200;
 
         let centraleData = { 
@@ -331,7 +350,7 @@
                 vulPosKnoppen();
                 vulDrankenTabel();
                 vulPosTabel();
-                vulHistorieTabel();
+                vulHistorieTabellen();
                 berekenVandaagTotaal();
             })
             .catch(err => console.error("Fout bij laden van JSONBin:", err));
@@ -492,7 +511,7 @@
 
             if (!centraleData.vocht) centraleData.vocht = [];
 
-            // Voeg elk geselecteerd item toe
+            // Nieuwste items bovenaan toevoegen
             geselecteerdeConsumpties.forEach(cons => {
                 let item = {
                     Datum: datumStr,
@@ -506,21 +525,20 @@
             });
 
             slaGeheleDataNaarBin();
-            vulHistorieTabel();
+            vulHistorieTabellen();
             berekenVandaagTotaal();
             
-            // Reset selecties
             geselecteerdeConsumpties = [];
             document.getElementById('notitie').value = '';
             vulConsumptieKnoppen();
-            alert('Geselecteerde consumpties opgeslagen in cloud!');
+            alert('Geselecteerde consumpties opgeslagen!');
         }
 
-        window.verwijderVocht = function(index) {
+        window.verwijderVocht = function(indexInArray) {
             if (confirm('Weet je zeker dat je dit item wilt verwijderen?')) {
-                centraleData.vocht.splice(index, 1);
+                centraleData.vocht.splice(indexInArray, 1);
                 slaGeheleDataNaarBin();
-                vulHistorieTabel();
+                vulHistorieTabellen();
                 berekenVandaagTotaal();
             }
         };
@@ -552,25 +570,49 @@
             }
         }
 
-        function vulHistorieTabel() {
-            let tbody = document.getElementById('historieTabelBody');
-            tbody.innerHTML = '';
+        function vulHistorieTabellen() {
+            let vandaagStr = new Date().toISOString().split('T')[0];
+            
+            // 1. Vandaag tabel (onder invoer)
+            let vandaagTbody = document.getElementById('vandaagTabelBody');
+            vandaagTbody.innerHTML = '';
+            
+            let vandaagItems = centraleData.vocht ? centraleData.vocht.map((v, idx) => ({...v, origineleIndex: idx})).filter(v => v.Datum === vandaagStr) : [];
+
+            if (vandaagItems.length === 0) {
+                vandaagTbody.innerHTML = '<tr><td colspan="5" style="color: #888;">Nog niets genuttigd vandaag.</td></tr>';
+            } else {
+                vandaagItems.forEach(v => {
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${v.Tijd}</td>
+                        <td><b>${v.Categorie || 'Drinken'}</b></td>
+                        <td>${v.Soort}</td>
+                        <td><b>${v.Hoeveelheid} ml</b></td>
+                        <td><button type="button" class="btn-small btn-del" onclick="verwijderVocht(${v.origineleIndex})">Wis</button></td>
+                    `;
+                    vandaagTbody.appendChild(tr);
+                });
+            }
+
+            // 2. Volledige Historie tabel
+            let histTbody = document.getElementById('historieTabelBody');
+            histTbody.innerHTML = '';
             if (!centraleData.vocht || centraleData.vocht.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="color: #888;">Geen consumpties geregistreerd.</td></tr>';
+                histTbody.innerHTML = '<tr><td colspan="5" style="color: #888;">Geen gegevens.</td></tr>';
                 return;
             }
 
             centraleData.vocht.forEach((v, index) => {
-                let catNaam = v.Categorie || 'Drinken';
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${v.Datum} ${v.Tijd}</td>
-                    <td><b>${catNaam}</b></td>
+                    <td><b>${v.Categorie || 'Drinken'}</b></td>
                     <td>${v.Soort}</td>
                     <td><b>${v.Hoeveelheid} ml</b></td>
                     <td><button type="button" class="btn-small btn-del" onclick="verwijderVocht(${index})">Wis</button></td>
                 `;
-                tbody.appendChild(tr);
+                histTbody.appendChild(tr);
             });
         }
 
