@@ -49,6 +49,11 @@
         .cat-btn { background: #e5e5e5; border: 1px solid #ccc; color: #333; font-weight: bold; padding: 8px 4px; border-radius: 4px; font-size: 12px; cursor: pointer; text-align: center; }
         .cat-btn.active { background: var(--win-blue); color: white; border-color: var(--win-blue); }
 
+        /* ITEM SELECTIE KNOPPEN GRID */
+        .item-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
+        .item-btn { background: #f8f8f8; border: 1px solid #ccc; color: #333; font-weight: 600; padding: 8px 4px; border-radius: 4px; font-size: 12px; cursor: pointer; text-align: center; }
+        .item-btn.selected { background: var(--win-blue); color: white; border-color: var(--win-blue); }
+
         /* POS SNEL-KNOPPEN GRID */
         .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
         .pos-btn { background: #eef6fc; border: 1px solid var(--win-blue); color: var(--win-blue); font-weight: bold; padding: 10px 4px; border-radius: 4px; font-size: 13px; cursor: pointer; text-align: center; }
@@ -119,10 +124,14 @@
                 </div>
             </div>
 
+            <!-- CONSUMPTIE KNOPPEN IN PLAATS VAN DROPDOWN -->
             <div class="form-group">
-                <label>Soort Consumptie</label>
-                <select id="selectDrank" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff;"></select>
+                <label>Kies Consumptie</label>
+                <div class="item-grid" id="consumptieKnoppenGrid">
+                    <!-- Wordt dynamisch gevuld -->
+                </div>
             </div>
+
             <div class="form-group" style="margin-top: 6px;">
                 <label>Hoeveelheid (ml / gram)</label>
                 <input type="number" id="hoeveelheidMl" placeholder="Bijv. 200" value="200">
@@ -215,6 +224,7 @@
         const DAGLIMIET = 1000;
 
         let actieveCategorie = "Drinken";
+        let geselecteerdeConsumptie = "";
         let centraleData = { 
             vocht: [], 
             dranken: [
@@ -256,7 +266,12 @@
             if (cat === 'Eten') document.getElementById('catEtenBtn').classList.add('active');
             if (cat === 'Tussendoor') document.getElementById('catTussendoorBtn').classList.add('active');
 
-            vulDrankenDropdown();
+            vulConsumptieKnoppen();
+        }
+
+        function kiesConsumptie(naam) {
+            geselecteerdeConsumptie = naam;
+            vulConsumptieKnoppen();
         }
 
         function zetMl(ml) {
@@ -280,12 +295,11 @@
                         { cat: "Drinken", naam: "Soep" }
                     ];
                 } else {
-                    // Migreer oude string-arrays naar object-structuur indien nodig
                     centraleData.dranken = centraleData.dranken.map(d => typeof d === 'string' ? { cat: "Drinken", naam: d } : d);
                 }
                 if (!centraleData.vocht) centraleData.vocht = [];
 
-                vulDrankenDropdown();
+                vulConsumptieKnoppen();
                 vulDrankenTabel();
                 vulHistorieTabel();
                 berekenVandaagTotaal();
@@ -321,19 +335,31 @@
             document.getElementById(btnId).classList.add('active');
         }
 
-        function vulDrankenDropdown() {
-            let select = document.getElementById('selectDrank');
-            let huidigeVal = select.value;
-            select.innerHTML = '';
+        function vulConsumptieKnoppen() {
+            let grid = document.getElementById('consumptieKnoppenGrid');
+            grid.innerHTML = '';
             
             let gefilterd = centraleData.dranken.filter(d => d.cat === actieveCategorie);
+            
+            if (gefilterd.length === 0) {
+                grid.innerHTML = '<div style="grid-column: span 3; color: #888; font-size: 11px;">Geen consumpties in deze categorie.</div>';
+                geselecteerdeConsumptie = "";
+                return;
+            }
+
+            // Als geselecteerde consumptie niet meer in deze categorie staat, kies de eerste
+            if (!gefilterd.some(d => d.naam === geselecteerdeConsumptie)) {
+                geselecteerdeConsumptie = gefilterd[0].naam;
+            }
+
             gefilterd.forEach(d => {
-                let opt = document.createElement('option');
-                opt.value = d.naam;
-                opt.innerText = d.naam;
-                select.appendChild(opt);
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'item-btn' + (d.naam === geselecteerdeConsumptie ? ' selected' : '');
+                btn.innerText = d.naam;
+                btn.onclick = () => kiesConsumptie(d.naam);
+                grid.appendChild(btn);
             });
-            if (huidigeVal) select.value = huidigeVal;
         }
 
         function vulDrankenTabel() {
@@ -361,7 +387,7 @@
                 centraleData.dranken.push({ cat: cat, naam: naam });
                 input.value = '';
                 slaGeheleDataNaarBin();
-                vulDrankenDropdown();
+                vulConsumptieKnoppen();
                 vulDrankenTabel();
             }
         }
@@ -370,12 +396,17 @@
             if (confirm('Weet je zeker dat je deze consumptie wilt verwijderen?')) {
                 centraleData.dranken.splice(index, 1);
                 slaGeheleDataNaarBin();
-                vulDrankenDropdown();
+                vulConsumptieKnoppen();
                 vulDrankenTabel();
             }
         };
 
         function slaVochtNaarBin() {
+            if (!geselecteerdeConsumptie) {
+                alert('Selecteer a.u.b. een consumptie.');
+                return;
+            }
+
             let nu = new Date();
             let datumStr = nu.toISOString().split('T')[0];
             let tijdStr = nu.toTimeString().slice(0, 5);
@@ -384,7 +415,7 @@
                 Datum: datumStr,
                 Tijd: tijdStr,
                 Categorie: actieveCategorie,
-                Soort: document.getElementById('selectDrank').value || 'Overig',
+                Soort: geselecteerdeConsumptie,
                 Hoeveelheid: parseInt(document.getElementById('hoeveelheidMl').value) || 0,
                 Notitie: document.getElementById('notitie').value || '-'
             };
