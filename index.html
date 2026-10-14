@@ -86,7 +86,7 @@
     <!-- TABBALK -->
     <div class="tab-bar">
         <button type="button" class="tab-btn active" id="tabInvoerBtn" data-target="invoerTab">📝 Vocht Invoer</button>
-        <button type="button" class="tab-btn" id="tabDrankenBtn" data-target="drankenTab">🥤 Dranken Beheer</button>
+        <button type="button" class="tab-btn" id="tabDrankenBtn" data-target="drankenTab">🥤 Consumpties Beheer</button>
         <button type="button" class="tab-btn" id="tabHistorieBtn" data-target="historieTab">📊 Historie & Totaal</button>
     </div>
 
@@ -104,7 +104,7 @@
         <div class="card">
             <div class="section-title">🥤 Consumptie & POS Invoer</div>
             <div class="form-group">
-                <label>Soort Drank</label>
+                <label>Soort Consumptie</label>
                 <select id="selectDrank" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff;"></select>
             </div>
             <div class="form-group" style="margin-top: 6px;">
@@ -135,28 +135,28 @@
         </div>
     </div>
 
-    <!-- TAB 2: DRANKEN BEHEER -->
+    <!-- TAB 2: CONSUMPTIES BEHEER -->
     <div id="drankenTab" class="tab-content">
         <div class="card">
-            <div class="section-title">➕ Nieuwe Drank Toevoegen</div>
+            <div class="section-title">➕ Nieuwe Consumptie Toevoegen</div>
             <div class="form-group">
-                <label>Naam Drankje</label>
+                <label>Naam Consumptie</label>
                 <input type="text" id="nieuweDrankNaam" placeholder="Bijv. Appelsap">
             </div>
-            <button type="button" class="action-btn btn-save" id="voegDrankToeBtn">+ Drank Toevoegen</button>
+            <button type="button" class="action-btn btn-save" id="voegDrankToeBtn">+ Consumptie Toevoegen</button>
         </div>
 
         <div class="card">
-            <div class="section-title">📋 Beschikbare Dranken</div>
+            <div class="section-title">📋 Beschikbare Consumpties</div>
             <table class="dialyse-table">
                 <thead>
                     <tr>
-                        <th>Drank Soort</th>
+                        <th>Soort Consumptie</th>
                         <th style="width: 80px;">Actie</th>
                     </tr>
                 </thead>
                 <tbody id="drankenTabelBody">
-                    <tr><td colspan="2" style="color: #888;">Dranken laden...</td></tr>
+                    <tr><td colspan="2" style="color: #888;">Consumpties laden...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -298,7 +298,7 @@
         }
 
         window.verwijderDrank = function(index) {
-            if (confirm('Weet je zeker dat je deze drank wilt verwijderen?')) {
+            if (confirm('Weet je zeker dat je deze consumptie wilt verwijderen?')) {
                 centraleData.dranken.splice(index, 1);
                 slaGeheleDataNaarBin();
                 vulDrankenDropdown();
