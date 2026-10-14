@@ -30,47 +30,47 @@
 
         /* TAB BAR */
         .tab-bar { display: flex; background: #e5e5e5; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-        .tab-btn { flex: 1; padding: 10px; font-size: 12px; font-weight: bold; background: #d6d6d6; border: none; cursor: pointer; text-align: center; color: #444; }
+        .tab-btn { flex: 1; padding: 8px; font-size: 11px; font-weight: bold; background: #d6d6d6; border: none; cursor: pointer; text-align: center; color: #444; }
         .tab-btn.active { background: var(--card-bg); color: var(--win-blue); border-bottom: 3px solid var(--win-blue); }
 
         /* CONTENT */
-        .tab-content { display: none; flex: 1; padding: 12px; overflow-y: auto; width: 100%; }
+        .tab-content { display: none; flex: 1; padding: 10px; overflow-y: auto; width: 100%; }
         .tab-content.active { display: block; }
 
-        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; margin-bottom: 12px; width: 100%; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-        .section-title { font-size: 12px; font-weight: bold; color: var(--win-blue); text-transform: uppercase; margin-bottom: 8px; border-bottom: 2px solid var(--win-blue); padding-bottom: 3px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; margin-bottom: 10px; width: 100%; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+        .section-title { font-size: 11px; font-weight: bold; color: var(--win-blue); text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid var(--win-blue); padding-bottom: 2px; }
 
-        .form-group { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
-        .form-group label { font-size: 11px; font-weight: 600; color: #555; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff; }
+        .form-group { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; }
+        .form-group label { font-size: 10px; font-weight: 600; color: #555; }
+        .form-group input, .form-group select { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; background: #fff; }
 
         /* CATEGORIE KNOPPEN */
-        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; margin-bottom: 8px; }
-        .cat-btn { background: #e5e5e5; border: 1px solid #ccc; color: #333; font-weight: bold; padding: 8px 4px; border-radius: 4px; font-size: 12px; cursor: pointer; text-align: center; }
+        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 2px; margin-bottom: 6px; }
+        .cat-btn { background: #e5e5e5; border: 1px solid #ccc; color: #333; font-weight: bold; padding: 6px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
         .cat-btn.active { background: var(--win-blue); color: white; border-color: var(--win-blue); }
 
-        /* ITEM SELECTIE KNOPPEN GRID */
-        .item-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
-        .item-btn { background: #f8f8f8; border: 1px solid #ccc; color: #333; font-weight: 600; padding: 8px 4px; border-radius: 4px; font-size: 12px; cursor: pointer; text-align: center; }
+        /* ITEM SELECTIE KNOPPEN GRID (50% korter in hoogte) */
+        .item-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 2px; }
+        .item-btn { background: #f8f8f8; border: 1px solid #ccc; color: #333; font-weight: 600; padding: 4px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
         .item-btn.selected { background: var(--win-blue); color: white; border-color: var(--win-blue); }
 
-        /* POS SNEL-KNOPPEN GRID */
-        .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px; }
-        .pos-btn { background: #eef6fc; border: 1px solid var(--win-blue); color: var(--win-blue); font-weight: bold; padding: 10px 4px; border-radius: 4px; font-size: 13px; cursor: pointer; text-align: center; }
-        .pos-btn:hover { background: var(--win-blue); color: white; }
+        /* POS SNEL-KNOPPEN GRID (50% korter in hoogte) */
+        .pos-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 2px; }
+        .pos-btn { background: #eef6fc; border: 1px solid var(--win-blue); color: var(--win-blue); font-weight: bold; padding: 5px 2px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
+        .pos-btn.selected { background: var(--win-blue); color: white; }
 
         /* PROGRESS DASHBOARD */
-        .dashboard-box { background: #eef6fc; border-left: 4px solid var(--win-blue); padding: 10px; border-radius: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .dashboard-stat { font-size: 16px; font-weight: bold; }
+        .dashboard-box { background: #eef6fc; border-left: 4px solid var(--win-blue); padding: 8px; border-radius: 4px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .dashboard-stat { font-size: 15px; font-weight: bold; }
 
-        .action-btn { flex: 1; padding: 10px; border: none; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; color: white; text-align: center; }
-        .btn-save { background: var(--win-blue); width: 100%; padding: 12px; font-size: 14px; margin-top: 10px; }
+        .action-btn { flex: 1; padding: 8px; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: white; text-align: center; }
+        .btn-save { background: var(--win-blue); width: 100%; padding: 10px; font-size: 13px; margin-top: 8px; }
         
-        .btn-small { padding: 4px 6px; font-size: 11px; border: none; border-radius: 3px; cursor: pointer; color: white; font-weight: bold; }
+        .btn-small { padding: 3px 5px; font-size: 10px; border: none; border-radius: 3px; cursor: pointer; color: white; font-weight: bold; }
         .btn-del { background: #d13438; }
 
-        table.dialyse-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 11px; background: #fff; }
-        table.dialyse-table th, table.dialyse-table td { border: 1px solid #ddd; padding: 6px; text-align: left; vertical-align: middle; }
+        table.dialyse-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 11px; background: #fff; }
+        table.dialyse-table th, table.dialyse-table td { border: 1px solid #ddd; padding: 5px; text-align: left; vertical-align: middle; }
         table.dialyse-table th { background: var(--win-blue); color: white; }
 
         @media print {
@@ -96,8 +96,9 @@
     <!-- TABBALK -->
     <div class="tab-bar">
         <button type="button" class="tab-btn active" id="tabInvoerBtn" data-target="invoerTab">📝 Vocht Invoer</button>
-        <button type="button" class="tab-btn" id="tabDrankenBtn" data-target="drankenTab">🥤 Consumpties Beheer</button>
-        <button type="button" class="tab-btn" id="tabHistorieBtn" data-target="historieTab">📊 Historie & Totaal</button>
+        <button type="button" class="tab-btn" id="tabDrankenBtn" data-target="drankenTab">🥤 Consumpties</button>
+        <button type="button" class="tab-btn" id="tabPosBtn" data-target="posTab">⚡ POS Toetsen</button>
+        <button type="button" class="tab-btn" id="tabHistorieBtn" data-target="historieTab">📊 Historie</button>
     </div>
 
     <!-- TAB 1: VOCHT INVOER -->
@@ -105,14 +106,14 @@
         <!-- DAGELIJKS LIMIET DASHBOARD -->
         <div class="dashboard-box" id="dashboardBox">
             <div>
-                <div style="font-size: 11px; color: #555; font-weight: bold;">TOTAAL VANDAAG</div>
+                <div style="font-size: 10px; color: #555; font-weight: bold;">TOTAAL VANDAAG</div>
                 <div class="dashboard-stat" id="totaalVandaagTxt">0 ml / 1000 ml</div>
             </div>
-            <div id="statusIndicatorTxt" style="font-weight: bold; font-size: 12px; padding: 4px 8px; border-radius: 3px; background: #107c41; color: white;">Binnen limiet</div>
+            <div id="statusIndicatorTxt" style="font-weight: bold; font-size: 11px; padding: 3px 6px; border-radius: 3px; background: #107c41; color: white;">Binnen limiet</div>
         </div>
 
         <div class="card">
-            <div class="section-title">🥤 Consumptie & POS Invoer</div>
+            <div class="section-title">🥤 Meerdere Consumpties Kiezen</div>
             
             <!-- CATEGORIE SELECTIE KNOPPEN -->
             <div class="form-group">
@@ -124,39 +125,28 @@
                 </div>
             </div>
 
-            <!-- CONSUMPTIE KNOPPEN IN PLAATS VAN DROPDOWN -->
+            <!-- MULTI-SELECT CONSUMPTIE KNOPPEN -->
             <div class="form-group">
-                <label>Kies Consumptie</label>
-                <div class="item-grid" id="consumptieKnoppenGrid">
-                    <!-- Wordt dynamisch gevuld -->
-                </div>
+                <label>Klik op items om te selecteren (meerdere mogelijk)</label>
+                <div class="item-grid" id="consumptieKnoppenGrid"></div>
             </div>
 
-            <div class="form-group" style="margin-top: 6px;">
-                <label>Hoeveelheid (ml / gram)</label>
+            <!-- MULTI-SELECT POS SNEL-HOEVEELHEID -->
+            <div class="form-group" style="margin-top: 4px;">
+                <label>Kies hoeveelheid (ml / gram)</label>
+                <div class="pos-grid" id="posKnoppenGrid"></div>
+            </div>
+
+            <div class="form-group" style="margin-top: 4px;">
+                <label>Hoeveelheid (ml/gram handmatig)</label>
                 <input type="number" id="hoeveelheidMl" placeholder="Bijv. 200" value="200">
             </div>
 
-            <!-- POS SNEL-KNOPPEN -->
-            <div class="form-group" style="margin-top: 6px;">
-                <label>POS Sneltoetsen</label>
-                <div class="pos-grid">
-                    <button type="button" class="pos-btn" onclick="zetMl(100)">100</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(150)">150</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(200)">200</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(250)">250</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(300)">300</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(400)">400</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(500)">500</button>
-                    <button type="button" class="pos-btn" onclick="zetMl(1000)">1000</button>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 8px;">
+            <div class="form-group" style="margin-top: 4px;">
                 <label>Opmerking (Optioneel)</label>
                 <input type="text" id="notitie" placeholder="Bijv. Tijdens maaltijd">
             </div>
-            <button type="button" class="action-btn btn-save" id="slaVochtBtn">💾 CONSUMPTIE TOEVOEGEN</button>
+            <button type="button" class="action-btn btn-save" id="slaVochtBtn">💾 VOEG ALLE GESELECTEERDE TOE</button>
         </div>
     </div>
 
@@ -166,13 +156,13 @@
             <div class="section-title">➕ Nieuwe Consumptie Toevoegen</div>
             <div class="form-group">
                 <label>Categorie</label>
-                <select id="nieuweCategorie" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff;">
+                <select id="nieuweCategorie" style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; background: #fff;">
                     <option value="Drinken">Drinken</option>
                     <option value="Eten">Eten</option>
                     <option value="Tussendoor">Tussendoor</option>
                 </select>
             </div>
-            <div class="form-group" style="margin-top: 6px;">
+            <div class="form-group" style="margin-top: 4px;">
                 <label>Naam Consumptie</label>
                 <input type="text" id="nieuweDrankNaam" placeholder="Bijv. Appelsap of Yoghurt">
             </div>
@@ -180,23 +170,50 @@
         </div>
 
         <div class="card">
-            <div class="section-title">📋 Beschikbare Consumpties</div>
+            <div class="section-title">📋 Beheer Consumpties</div>
             <table class="dialyse-table">
                 <thead>
                     <tr>
-                        <th>Categorie</th>
+                        <th>Cat</th>
                         <th>Naam</th>
-                        <th style="width: 80px;">Actie</th>
+                        <th style="width: 60px;">Actie</th>
                     </tr>
                 </thead>
                 <tbody id="drankenTabelBody">
-                    <tr><td colspan="3" style="color: #888;">Consumpties laden...</td></tr>
+                    <tr><td colspan="3" style="color: #888;">Laden...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- TAB 3: HISTORIE -->
+    <!-- TAB 3: POS TOETSEN BEHEER -->
+    <div id="posTab" class="tab-content">
+        <div class="card">
+            <div class="section-title">➕ Nieuwe POS Sneltoets Toevoegen</div>
+            <div class="form-group">
+                <label>Hoeveelheid in ml/gram</label>
+                <input type="number" id="nieuwePosMl" placeholder="Bijv. 350">
+            </div>
+            <button type="button" class="action-btn btn-save" id="voegPosToeBtn">+ POS Toets Toevoegen</button>
+        </div>
+
+        <div class="card">
+            <div class="section-title">⚡ Beheer POS Sneltoetsen</div>
+            <table class="dialyse-table">
+                <thead>
+                    <tr>
+                        <th>Hoeveelheid (ml)</th>
+                        <th style="width: 60px;">Actie</th>
+                    </tr>
+                </thead>
+                <tbody id="posTabelBody">
+                    <tr><td colspan="2" style="color: #888;">Laden...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 4: HISTORIE -->
     <div id="historieTab" class="tab-content">
         <div class="card">
             <div class="section-title">📊 Vocht & Consumptie Historie Overzicht</div>
@@ -204,15 +221,14 @@
                 <thead>
                     <tr>
                         <th>Datum & Tijd</th>
-                        <th>Categorie</th>
+                        <th>Cat</th>
                         <th>Soort</th>
                         <th>Hoeveelheid</th>
-                        <th>Opmerking</th>
-                        <th style="width: 70px;">Actie</th>
+                        <th style="width: 50px;">Actie</th>
                     </tr>
                 </thead>
                 <tbody id="historieTabelBody">
-                    <tr><td colspan="6" style="color: #888;">Gegevens laden...</td></tr>
+                    <tr><td colspan="5" style="color: #888;">Gegevens laden...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -224,7 +240,9 @@
         const DAGLIMIET = 1000;
 
         let actieveCategorie = "Drinken";
-        let geselecteerdeConsumptie = "";
+        let geselecteerdeConsumpties = []; // Meerdere selecties
+        let geselecteerdePosMl = 200;
+
         let centraleData = { 
             vocht: [], 
             dranken: [
@@ -238,7 +256,8 @@
                 { cat: "Eten", naam: "Warm eten" },
                 { cat: "Tussendoor", naam: "Yoghurt" },
                 { cat: "Tussendoor", naam: "Fruit" }
-            ] 
+            ],
+            posToetsen: [100, 150, 200, 250, 300, 400, 500, 1000]
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -247,7 +266,8 @@
             document.getElementById('btnPdf').addEventListener('click', genereerProPDF);
 
             document.getElementById('voegDrankToeBtn').addEventListener('click', voegDrankToe);
-            document.getElementById('slaVochtBtn').addEventListener('click', slaVochtNaarBin);
+            document.getElementById('voegPosToeBtn').addEventListener('click', voegPosToetsToe);
+            document.getElementById('slaVochtBtn').addEventListener('click', slaMeerdereVochtNaarBin);
 
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => wisselTab(e.target.dataset.target, e.target.id));
@@ -269,13 +289,20 @@
             vulConsumptieKnoppen();
         }
 
-        function kiesConsumptie(naam) {
-            geselecteerdeConsumptie = naam;
+        function toggleConsumptie(naam) {
+            let index = geselecteerdeConsumpties.indexOf(naam);
+            if (index > -1) {
+                geselecteerdeConsumpties.splice(index, 1);
+            } else {
+                geselecteerdeConsumpties.push(naam);
+            }
             vulConsumptieKnoppen();
         }
 
-        function zetMl(ml) {
+        function kiesPosMl(ml) {
+            geselecteerdePosMl = ml;
             document.getElementById('hoeveelheidMl').value = ml;
+            vulPosKnoppen();
         }
 
         function laadDataVanBin() {
@@ -297,10 +324,13 @@
                 } else {
                     centraleData.dranken = centraleData.dranken.map(d => typeof d === 'string' ? { cat: "Drinken", naam: d } : d);
                 }
+                if (!centraleData.posToetsen) centraleData.posToetsen = [100, 150, 200, 250, 300, 400, 500, 1000];
                 if (!centraleData.vocht) centraleData.vocht = [];
 
                 vulConsumptieKnoppen();
+                vulPosKnoppen();
                 vulDrankenTabel();
+                vulPosTabel();
                 vulHistorieTabel();
                 berekenVandaagTotaal();
             })
@@ -342,22 +372,32 @@
             let gefilterd = centraleData.dranken.filter(d => d.cat === actieveCategorie);
             
             if (gefilterd.length === 0) {
-                grid.innerHTML = '<div style="grid-column: span 3; color: #888; font-size: 11px;">Geen consumpties in deze categorie.</div>';
-                geselecteerdeConsumptie = "";
+                grid.innerHTML = '<div style="grid-column: span 3; color: #888; font-size: 10px;">Geen consumpties in deze categorie.</div>';
                 return;
             }
 
-            // Als geselecteerde consumptie niet meer in deze categorie staat, kies de eerste
-            if (!gefilterd.some(d => d.naam === geselecteerdeConsumptie)) {
-                geselecteerdeConsumptie = gefilterd[0].naam;
-            }
-
             gefilterd.forEach(d => {
+                let isSelected = geselecteerdeConsumpties.includes(d.naam);
                 let btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'item-btn' + (d.naam === geselecteerdeConsumptie ? ' selected' : '');
+                btn.className = 'item-btn' + (isSelected ? ' selected' : '');
                 btn.innerText = d.naam;
-                btn.onclick = () => kiesConsumptie(d.naam);
+                btn.onclick = () => toggleConsumptie(d.naam);
+                grid.appendChild(btn);
+            });
+        }
+
+        function vulPosKnoppen() {
+            let grid = document.getElementById('posKnoppenGrid');
+            grid.innerHTML = '';
+
+            centraleData.posToetsen.forEach(ml => {
+                let isSelected = (ml === geselecteerdePosMl);
+                let btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pos-btn' + (isSelected ? ' selected' : '');
+                btn.innerText = ml + ' ml';
+                btn.onclick = () => kiesPosMl(ml);
                 grid.appendChild(btn);
             });
         }
@@ -371,6 +411,19 @@
                     <td><b>${d.cat}</b></td>
                     <td>${d.naam}</td>
                     <td><button type="button" class="btn-small btn-del" onclick="verwijderDrank(${index})">Wis</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function vulPosTabel() {
+            let tbody = document.getElementById('posTabelBody');
+            tbody.innerHTML = '';
+            centraleData.posToetsen.forEach((ml, index) => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${ml} ml</b></td>
+                    <td><button type="button" class="btn-small btn-del" onclick="verwijderPos(${index})">Wis</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -401,32 +454,66 @@
             }
         };
 
-        function slaVochtNaarBin() {
-            if (!geselecteerdeConsumptie) {
-                alert('Selecteer a.u.b. een consumptie.');
+        function voegPosToetsToe() {
+            let input = document.getElementById('nieuwePosMl');
+            let ml = parseInt(input.value);
+            if (!ml || isNaN(ml)) return;
+
+            if (!centraleData.posToetsen.includes(ml)) {
+                centraleData.posToetsen.push(ml);
+                centraleData.posToetsen.sort((a, b) => a - b);
+                input.value = '';
+                slaGeheleDataNaarBin();
+                vulPosKnoppen();
+                vulPosTabel();
+            }
+        }
+
+        window.verwijderPos = function(index) {
+            if (confirm('Weet je zeker dat je deze POS toets wilt verwijderen?')) {
+                centraleData.posToetsen.splice(index, 1);
+                slaGeheleDataNaarBin();
+                vulPosKnoppen();
+                vulPosTabel();
+            }
+        };
+
+        function slaMeerdereVochtNaarBin() {
+            if (geselecteerdeConsumpties.length === 0) {
+                alert('Selecteer a.u.b. ten minste één consumptie.');
                 return;
             }
 
+            let hoeveelheid = parseInt(document.getElementById('hoeveelheidMl').value) || 0;
+            let notitie = document.getElementById('notitie').value || '-';
             let nu = new Date();
             let datumStr = nu.toISOString().split('T')[0];
             let tijdStr = nu.toTimeString().slice(0, 5);
 
-            let item = {
-                Datum: datumStr,
-                Tijd: tijdStr,
-                Categorie: actieveCategorie,
-                Soort: geselecteerdeConsumptie,
-                Hoeveelheid: parseInt(document.getElementById('hoeveelheidMl').value) || 0,
-                Notitie: document.getElementById('notitie').value || '-'
-            };
-
             if (!centraleData.vocht) centraleData.vocht = [];
-            centraleData.vocht.unshift(item);
+
+            // Voeg elk geselecteerd item toe
+            geselecteerdeConsumpties.forEach(cons => {
+                let item = {
+                    Datum: datumStr,
+                    Tijd: tijdStr,
+                    Categorie: actieveCategorie,
+                    Soort: cons,
+                    Hoeveelheid: hoeveelheid,
+                    Notitie: notitie
+                };
+                centraleData.vocht.unshift(item);
+            });
+
             slaGeheleDataNaarBin();
             vulHistorieTabel();
             berekenVandaagTotaal();
+            
+            // Reset selecties
+            geselecteerdeConsumpties = [];
             document.getElementById('notitie').value = '';
-            alert('Consumptie opgeslagen in cloud!');
+            vulConsumptieKnoppen();
+            alert('Geselecteerde consumpties opgeslagen in cloud!');
         }
 
         window.verwijderVocht = function(index) {
@@ -469,7 +556,7 @@
             let tbody = document.getElementById('historieTabelBody');
             tbody.innerHTML = '';
             if (!centraleData.vocht || centraleData.vocht.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="color: #888;">Geen consumpties geregistreerd.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="color: #888;">Geen consumpties geregistreerd.</td></tr>';
                 return;
             }
 
@@ -481,7 +568,6 @@
                     <td><b>${catNaam}</b></td>
                     <td>${v.Soort}</td>
                     <td><b>${v.Hoeveelheid} ml</b></td>
-                    <td>${v.Notitie}</td>
                     <td><button type="button" class="btn-small btn-del" onclick="verwijderVocht(${index})">Wis</button></td>
                 `;
                 tbody.appendChild(tr);
